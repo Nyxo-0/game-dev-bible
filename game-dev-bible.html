@@ -1,0 +1,1122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Complete Game Development Bible</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:ital,wght@0,400;0,500;1,400&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#09090f;--bg2:#0c1018;--surface:#111826;--card:#141d2b;
+  --border:#1b2a40;--border2:#243350;
+  --accent:#3df4a8;--red:#ff3860;--amber:#ffbd2e;--purple:#a78bfa;
+  --blue:#60a5fa;--cyan:#22d3ee;
+  --text:#dde2f0;--text2:#8a9ab8;--muted:#4a5670;
+  --sidebar-w:268px;--r:8px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);line-height:1.75;min-height:100vh;overflow-x:hidden}
+#rp{position:fixed;top:0;left:var(--sidebar-w);right:0;height:3px;z-index:1000;background:linear-gradient(90deg,var(--accent),var(--cyan));transform-origin:left;transform:scaleX(0);box-shadow:0 0 10px var(--accent);transition:transform .08s linear}
+.sidebar{position:fixed;top:0;left:0;width:var(--sidebar-w);height:100vh;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;z-index:200;scrollbar-width:thin;scrollbar-color:var(--border2) transparent}
+.sidebar::-webkit-scrollbar{width:4px}
+.sidebar::-webkit-scrollbar-thumb{background:var(--border2);border-radius:2px}
+.sb-brand{padding:1.4rem 1.2rem 1rem;border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg2);z-index:1}
+.sb-logo{font-size:1.6rem;margin-bottom:.2rem}
+.sb-title{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:.7rem;letter-spacing:.14em;text-transform:uppercase;color:var(--text2)}
+.sb-nav{flex:1;padding:.4rem 0 2rem}
+.nav-list{list-style:none}
+.nav-link{display:flex;align-items:center;gap:.55rem;padding:.38rem 1.15rem;text-decoration:none;color:var(--text2);font-size:.76rem;font-weight:500;border-left:2px solid transparent;transition:all .13s;position:relative;line-height:1.35}
+.nav-link:hover{color:var(--text);background:rgba(255,255,255,.025)}
+.nav-link.active{color:var(--text);border-left-color:var(--nc,var(--accent));background:rgba(255,255,255,.035)}
+.nav-dot{width:6px;height:6px;border-radius:50%;background:var(--nc,var(--muted));flex-shrink:0;transition:box-shadow .2s}
+.nav-link.active .nav-dot{box-shadow:0 0 7px var(--nc,var(--accent))}
+.nav-num{font-family:'Fira Code',monospace;font-size:.6rem;color:var(--muted);min-width:1.4rem;flex-shrink:0}
+.nav-gl{padding:.7rem 1.15rem .2rem;font-size:.58rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--muted)}
+.sb-toggle{display:none;position:fixed;top:.65rem;right:.65rem;z-index:300;background:var(--card);border:1px solid var(--border);color:var(--text);padding:.4rem .65rem;border-radius:var(--r);cursor:pointer;font-size:1rem;line-height:1}
+.main{margin-left:var(--sidebar-w);min-height:100vh}
+.hero{padding:5rem 3.5rem 3.5rem;background:var(--bg2);border-bottom:1px solid var(--border);position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(61,244,168,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(61,244,168,.04) 1px,transparent 1px);background-size:44px 44px;pointer-events:none}
+.hero::after{content:'';position:absolute;bottom:0;left:0;right:0;height:55%;background:linear-gradient(to top,var(--bg2),transparent);pointer-events:none}
+.hero>*{position:relative;z-index:1}
+.hero-ey{font-family:'Fira Code',monospace;font-size:.7rem;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin-bottom:.9rem}
+.hero h1{font-family:'Space Grotesk',sans-serif;font-size:clamp(1.85rem,4.5vw,3.1rem);font-weight:700;line-height:1.15;color:var(--text);margin-bottom:1rem}
+.hero h1 em{color:var(--accent);font-style:normal}
+.hero-sub{max-width:58rem;font-size:.98rem;color:var(--text2);line-height:1.75;margin-bottom:2rem}
+.hero-stats{display:flex;gap:2.5rem;flex-wrap:wrap}
+.stat-n{font-family:'Space Grotesk',sans-serif;font-size:1.7rem;font-weight:700;color:var(--accent);line-height:1}
+.stat-l{font-size:.68rem;color:var(--text2);text-transform:uppercase;letter-spacing:.08em;margin-top:.1rem}
+.section{padding:3rem 3.5rem;border-bottom:1px solid var(--border);scroll-margin-top:1.25rem}
+.section:nth-child(even){background:rgba(255,255,255,.008)}
+.sh{display:flex;align-items:flex-start;gap:1.15rem;margin-bottom:1.75rem;padding-bottom:1.4rem;border-bottom:1px solid var(--border)}
+.sh-icon{font-size:2rem;flex-shrink:0;margin-top:.1rem}
+.sh-body{flex:1}
+.sh-tag{font-size:.6rem;font-weight:700;letter-spacing:.16em;text-transform:uppercase;color:var(--sc,var(--accent));margin-bottom:.22rem}
+.section h2{font-family:'Space Grotesk',sans-serif;font-size:1.65rem;font-weight:700;color:var(--text);line-height:1.2;border-left:3px solid var(--sc,var(--accent));padding-left:.8rem;margin-left:-.8rem}
+.sh-num{font-family:'Fira Code',monospace;font-size:.62rem;color:var(--muted);background:var(--card);border:1px solid var(--border);padding:.22rem .48rem;border-radius:4px;white-space:nowrap;flex-shrink:0;margin-top:.35rem}
+.s-intro{font-size:.96rem;color:var(--text2);max-width:72rem;margin-bottom:2rem;line-height:1.78}
+.sub{margin-bottom:1.85rem}
+.sub h3{font-family:'Space Grotesk',sans-serif;font-size:.98rem;font-weight:600;color:var(--text);margin-bottom:.6rem;display:flex;align-items:center;gap:.45rem}
+.sub h3::before{content:'';display:inline-block;width:3px;height:1em;background:var(--sc,var(--accent));border-radius:2px;flex-shrink:0}
+.sub p{color:var(--text2);margin-bottom:.6rem;max-width:70rem;font-size:.93rem;line-height:1.72}
+.gl{list-style:none;padding:0;display:flex;flex-direction:column;gap:.32rem;margin-bottom:.9rem}
+.gl li{display:flex;align-items:flex-start;gap:.55rem;font-size:.92rem;color:var(--text2);line-height:1.62;max-width:70rem}
+.gl li::before{content:'▸';color:var(--sc,var(--accent));flex-shrink:0;font-size:.72rem;margin-top:.28rem}
+.gl strong{color:var(--text);font-weight:500}
+.callout{display:flex;gap:.85rem;align-items:flex-start;padding:.95rem 1.15rem;border-radius:var(--r);border:1px solid;margin:1.35rem 0;max-width:70rem}
+.ci{font-size:1.1rem;flex-shrink:0;margin-top:.05rem}
+.cl{font-size:.6rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;margin-bottom:.18rem}
+.callout p,.callout li{font-size:.87rem;line-height:1.65;color:var(--text2)}
+.callout p+p{margin-top:.35rem}
+.callout ul{list-style:disc;padding-left:1.15rem;font-size:.87rem;line-height:1.7;color:var(--text2)}
+.pro{background:rgba(255,189,46,.055);border-color:rgba(255,189,46,.22)}
+.pro .cl{color:#ffbd2e}
+.warn{background:rgba(255,56,96,.05);border-color:rgba(255,56,96,.18)}
+.warn .cl{color:#ff3860}
+.info{background:rgba(96,165,250,.05);border-color:rgba(96,165,250,.18)}
+.info .cl{color:#60a5fa}
+.note{background:rgba(167,139,250,.05);border-color:rgba(167,139,250,.18)}
+.note .cl{color:#a78bfa}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:.9rem;margin-bottom:1.4rem;max-width:70rem}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:.85rem;margin-bottom:1.4rem;max-width:70rem}
+.mc{background:var(--card);border:1px solid var(--border);border-radius:var(--r);padding:.85rem .95rem}
+.mc h4{font-family:'Space Grotesk',sans-serif;font-size:.8rem;font-weight:600;color:var(--text);margin-bottom:.3rem}
+.mc p{font-size:.78rem;color:var(--text2);margin:0;line-height:1.55}
+.mc .tag{font-size:.58rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--sc,var(--accent));margin-bottom:.4rem}
+.tools{display:flex;flex-wrap:wrap;gap:.4rem;align-items:center;margin-top:1rem;padding-top:.9rem;border-top:1px solid var(--border)}
+.tl{font-size:.6rem;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-right:.15rem}
+.chip{display:inline-block;font-size:.71rem;font-weight:500;padding:.2rem .58rem;background:var(--card);border:1px solid var(--border);border-radius:100px;color:var(--text2)}
+code{font-family:'Fira Code',monospace;font-size:.83em;background:var(--surface);color:var(--cyan);padding:.09em .38em;border-radius:4px;border:1px solid var(--border)}
+.divider{height:1px;background:linear-gradient(90deg,var(--sc,var(--accent)),transparent);margin:1.75rem 0;max-width:70rem;opacity:.3}
+@media(max-width:920px){
+  .sidebar{transform:translateX(-268px);transition:transform .25s;width:268px}
+  .sidebar.open{transform:translateX(0)}
+  .sb-toggle{display:block}
+  .main{margin-left:0}
+  #rp{left:0}
+  .section{padding:2rem 1.4rem}
+  .hero{padding:3.5rem 1.4rem 2.5rem}
+  .g2,.g3{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .section{padding:1.75rem 1.1rem}
+  .hero{padding:2.75rem 1.1rem 2rem}
+  .hero h1{font-size:1.6rem}
+  .section h2{font-size:1.3rem}
+  .hero-stats{gap:1.5rem}
+}
+::-webkit-scrollbar{width:6px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--border2)}
+</style>
+</head>
+<body>
+<div id="rp"></div>
+<button class="sb-toggle" id="sbt" onclick="document.getElementById('sidebar').classList.toggle('open')">☰</button>
+
+<nav class="sidebar" id="sidebar">
+  <div class="sb-brand">
+    <div class="sb-logo">🎮</div>
+    <div class="sb-title">Game Dev Bible</div>
+  </div>
+  <div class="sb-nav">
+    <div class="nav-gl">Foundation</div>
+    <ul class="nav-list">
+      <li><a href="#s01" class="nav-link" style="--nc:#3df4a8" data-id="s01"><span class="nav-dot"></span><span class="nav-num">01</span><span>Pre-Production</span></a></li>
+      <li><a href="#s02" class="nav-link" style="--nc:#7c83fd" data-id="s02"><span class="nav-dot"></span><span class="nav-num">02</span><span>Engine Selection</span></a></li>
+      <li><a href="#s03" class="nav-link" style="--nc:#60a5fa" data-id="s03"><span class="nav-dot"></span><span class="nav-num">03</span><span>Programming</span></a></li>
+    </ul>
+    <div class="nav-gl">Production</div>
+    <ul class="nav-list">
+      <li><a href="#s04" class="nav-link" style="--nc:#fd79a8" data-id="s04"><span class="nav-dot"></span><span class="nav-num">04</span><span>Art &amp; Visuals</span></a></li>
+      <li><a href="#s05" class="nav-link" style="--nc:#fdcb6e" data-id="s05"><span class="nav-dot"></span><span class="nav-num">05</span><span>Audio Design</span></a></li>
+      <li><a href="#s06" class="nav-link" style="--nc:#55efc4" data-id="s06"><span class="nav-dot"></span><span class="nav-num">06</span><span>Level Design</span></a></li>
+      <li><a href="#s07" class="nav-link" style="--nc:#e17055" data-id="s07"><span class="nav-dot"></span><span class="nav-num">07</span><span>AI Systems</span></a></li>
+      <li><a href="#s08" class="nav-link" style="--nc:#6c5ce7" data-id="s08"><span class="nav-dot"></span><span class="nav-num">08</span><span>Networking</span></a></li>
+      <li><a href="#s09" class="nav-link" style="--nc:#00cec9" data-id="s09"><span class="nav-dot"></span><span class="nav-num">09</span><span>UI / UX</span></a></li>
+      <li><a href="#s10" class="nav-link" style="--nc:#fc5c65" data-id="s10"><span class="nav-dot"></span><span class="nav-num">10</span><span>Animation &amp; VFX</span></a></li>
+      <li><a href="#s11" class="nav-link" style="--nc:#2bcbba" data-id="s11"><span class="nav-dot"></span><span class="nav-num">11</span><span>Physics</span></a></li>
+      <li><a href="#s12" class="nav-link" style="--nc:#45aaf2" data-id="s12"><span class="nav-dot"></span><span class="nav-num">12</span><span>Narrative &amp; Writing</span></a></li>
+    </ul>
+    <div class="nav-gl">Quality &amp; Performance</div>
+    <ul class="nav-list">
+      <li><a href="#s13" class="nav-link" style="--nc:#ff7675" data-id="s13"><span class="nav-dot"></span><span class="nav-num">13</span><span>Performance</span></a></li>
+      <li><a href="#s14" class="nav-link" style="--nc:#00b894" data-id="s14"><span class="nav-dot"></span><span class="nav-num">14</span><span>Testing &amp; QA</span></a></li>
+    </ul>
+    <div class="nav-gl">Business &amp; Launch</div>
+    <ul class="nav-list">
+      <li><a href="#s15" class="nav-link" style="--nc:#ffeaa7" data-id="s15"><span class="nav-dot"></span><span class="nav-num">15</span><span>Monetization</span></a></li>
+      <li><a href="#s16" class="nav-link" style="--nc:#fd9644" data-id="s16"><span class="nav-dot"></span><span class="nav-num">16</span><span>Marketing</span></a></li>
+      <li><a href="#s17" class="nav-link" style="--nc:#a29bfe" data-id="s17"><span class="nav-dot"></span><span class="nav-num">17</span><span>Launch</span></a></li>
+    </ul>
+    <div class="nav-gl">Team &amp; Infrastructure</div>
+    <ul class="nav-list">
+      <li><a href="#s18" class="nav-link" style="--nc:#e84393" data-id="s18"><span class="nav-dot"></span><span class="nav-num">18</span><span>Team &amp; Pipeline</span></a></li>
+      <li><a href="#s19" class="nav-link" style="--nc:#26de81" data-id="s19"><span class="nav-dot"></span><span class="nav-num">19</span><span>Tools &amp; Version Control</span></a></li>
+      <li><a href="#s20" class="nav-link" style="--nc:#8854d0" data-id="s20"><span class="nav-dot"></span><span class="nav-num">20</span><span>Security &amp; Anti-Cheat</span></a></li>
+    </ul>
+  </div>
+</nav>
+
+<main class="main">
+<div class="hero">
+  <div class="hero-ey">// The Definitive Reference · All 20 Pillars of Game Development</div>
+  <h1>The Complete<br><em>Game Development</em><br>Bible</h1>
+  <p class="hero-sub">Every aspect of professional game development — from first idea to post-launch live ops — with the techniques and philosophy used at top studios worldwide. Whether you are a solo indie developer or joining a AAA team, this is your complete, unabridged reference for building great games.</p>
+  <div class="hero-stats">
+    <div><div class="stat-n">20</div><div class="stat-l">Major Disciplines</div></div>
+    <div><div class="stat-n">120+</div><div class="stat-l">Core Techniques</div></div>
+    <div><div class="stat-n">80+</div><div class="stat-l">Pro Insights</div></div>
+    <div><div class="stat-n">AAA</div><div class="stat-l">Industry Standard</div></div>
+  </div>
+</div>
+<div class="content">
+<!-- S01 PRE-PRODUCTION -->
+<section id="s01" class="section" style="--sc:#3df4a8">
+  <div class="sh"><div class="sh-icon">🎮</div><div class="sh-body"><div class="sh-tag">Chapter 01 · Foundation</div><h2>Pre-Production &amp; Game Design</h2></div><div class="sh-num">01 / 20</div></div>
+  <p class="s-intro">Pre-production is the invisible foundation that determines whether your game succeeds or fails. Every hour spent here saves ten in production. This phase is about ruthlessly defining what your game <em>is</em>, who it's for, and why it deserves to exist — before a single line of code is written or a pixel placed.</p>
+
+  <div class="sub">
+    <h3>Core Loop &amp; Design Pillars</h3>
+    <p>Every successful game is built on a simple, compelling core loop and 2–4 design pillars that act as a filter for every decision you make throughout development.</p>
+    <ul class="gl">
+      <li><strong>The 30-second loop:</strong> The fundamental action the player repeats (jump, attack, collect, solve). This must be fun in isolation before you layer anything on top. If it isn't fun stripped bare, no amount of story or polish will save it.</li>
+      <li><strong>The 5-minute loop:</strong> How 30-second loops combine into a meaningful encounter or challenge. This is where tension, escalation, and payoff live. A combat encounter, a platforming sequence, a puzzle room.</li>
+      <li><strong>The 30-minute loop:</strong> The overarching session structure — what keeps players coming back. Unlocks, progression, story beats, social competition. This is your retention engine.</li>
+      <li><strong>Design pillars:</strong> 2–4 short, declarative sentences that define your game's soul. Example: "Every encounter is a puzzle with multiple valid solutions." Every feature must pass the pillar test. If it doesn't serve a pillar, cut it.</li>
+      <li><strong>Unique Selling Proposition:</strong> What makes your game different in one sentence? If you cannot articulate this clearly, you have a positioning problem, not a development problem. Solve the positioning first.</li>
+      <li><strong>One-sentence pitch:</strong> "It's [reference game] meets [reference game] but [key differentiator]." This forces clarity and reveals whether your concept is distinct enough to survive in the market.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>The Game Design Document (GDD)</h3>
+    <p>A GDD is not a novel. It is a living reference document. Modern studios prefer a wiki-style GDD (Notion, Confluence) over a monolithic PDF. The key is that it answers questions before they are asked and prevents the same design debates happening three times.</p>
+    <ul class="gl">
+      <li><strong>Vision statement:</strong> One tight paragraph. What game is this, who is it for, and what emotion should the player leave with? Everyone on the team should be able to recite this from memory.</li>
+      <li><strong>Feature list with tiers:</strong> MUST have (MVP, ships with game), SHOULD have (v1.1 if budget allows), NICE to have (post-launch or never). This single discipline prevents feature creep from killing your project.</li>
+      <li><strong>Mechanics specification:</strong> How does movement, combat, interaction, and economy actually work? Specific enough that a developer can implement it without asking follow-up questions.</li>
+      <li><strong>Systems map:</strong> A diagram showing how all game systems interact and share data. Critical for spotting where you have over-engineered dependency chains before you build them.</li>
+      <li><strong>Art direction brief:</strong> Reference images, colour palette, what to avoid, lighting mood, perspective rules. Enough for an artist to produce on-brief work without you in the room.</li>
+      <li><strong>Technical requirements:</strong> Target platforms, minimum hardware specs, engine choice, third-party middleware, online requirements. Lock these in before production starts.</li>
+      <li><strong>Risk register:</strong> A list of the five biggest things that could kill this project and a mitigation plan for each. Most teams skip this. None of the successful ones do.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight — How the Industry Leaders Do It</div>
+    <p><strong>Nintendo</strong> prototypes the core mechanic as a stripped-down toy and plays it for weeks before committing to any theme, story, or character. If holding the controller and doing the thing isn't joyful in isolation, nothing else matters. <strong>Valve's</strong> design philosophy asks: "Does this create interesting decisions?" — not just "is this cool?" Every mechanic must give the player a genuine choice with trade-offs. <strong>Larian Studios</strong> (Baldur's Gate 3) runs a strict design diet — every feature request goes through ROI analysis of player enjoyment vs. development cost before entering the GDD. <strong>Rockstar</strong> writes what they call a "tone bible" — a full document on how every scene, character, and mechanic should feel emotionally, regardless of how it's implemented.</p>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>Player Psychology &amp; Motivation Frameworks</h3>
+    <ul class="gl">
+      <li><strong>MDA Framework (Mechanics → Dynamics → Aesthetics):</strong> Design from the aesthetic experience you want the player to have, work backwards to the dynamics that create it, then build the mechanics. Most bad games design mechanics first and wonder why they aren't fun.</li>
+      <li><strong>Flow State (Csikszentmihalyi):</strong> The sweet spot between too easy (boredom) and too hard (anxiety). Great game design means constantly nudging the player toward flow. Dynamic difficulty adjustment systems exist specifically for this.</li>
+      <li><strong>Bartle's Taxonomy:</strong> Players are Achievers (win), Explorers (discover), Socializers (connect), or Killers (dominate). Know your primary audience and design primarily for them; don't alienate the others.</li>
+      <li><strong>Self-Determination Theory:</strong> Players need autonomy (meaningful choices), competence (achievable challenge), and relatedness (social connection). Games that deliver all three create genuinely deep, sustained engagement.</li>
+      <li><strong>Variable reward schedules:</strong> Psychologically potent — unpredictable rewards create more engagement than fixed ones. Use with care. This is a tool, not a weapon. Know the ethical line and respect it.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Prototyping &amp; Scope Management</h3>
+    <ul class="gl">
+      <li><strong>Prototype first, always:</strong> Never enter full production without a prototype proving your core loop is fun. Prototypes are cheap. Productions are not. The prototype's job is to answer "is this actually fun?" — not to look good.</li>
+      <li><strong>Paper prototyping:</strong> For strategy, puzzle, and card games, paper tests mechanics in hours, not weeks. Even action games benefit from whiteboard flow diagrams of moment-to-moment play before any code.</li>
+      <li><strong>Vertical slice:</strong> A polished, representative 10–15 minute chunk used for funding pitches and internal alignment. Often the first level. It proves your visual bar, technical feasibility, and design intent simultaneously.</li>
+      <li><strong>Team-adjusted scope:</strong> A 2-person team cannot build Skyrim. Divide your dream scope by 4 for your first game. Scope by your actual team size and proven velocity, not by ambition alone.</li>
+      <li><strong>Kill your darlings:</strong> If a prototype doesn't convince fresh playtesters, cut it before it costs you a year. The sunk cost fallacy has killed more games than any technical failure in history.</li>
+      <li><strong>Market research:</strong> Use SteamSpy, SteamDB, and itch.io analytics. Know the actual sales numbers for games like yours before committing years of your life. Read the 1-star reviews of your competitors — that's your free design brief.</li>
+    </ul>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span><div>
+    <div class="cl">Most Common Mistake</div>
+    <p><strong>Skipping pre-production because you're excited to build.</strong> This is the single most common reason games fail. Two months of solid design and prototyping saves eighteen months of rework and prevents the crushing demoralisation of dismantling a system you spent six months building. "We'll figure it out in development" is a project management failure mode, not a creative philosophy.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Notion</span><span class="chip">Confluence</span><span class="chip">Miro</span><span class="chip">Figma</span><span class="chip">SteamSpy</span><span class="chip">SteamDB</span><span class="chip">Trello</span><span class="chip">GameAnalytics</span></div>
+</section>
+
+<!-- S02 ENGINE SELECTION -->
+<section id="s02" class="section" style="--sc:#7c83fd">
+  <div class="sh"><div class="sh-icon">⚙️</div><div class="sh-body"><div class="sh-tag">Chapter 02 · Foundation</div><h2>Engine &amp; Technology Selection</h2></div><div class="sh-num">02 / 20</div></div>
+  <p class="s-intro">Choosing the wrong engine isn't fatal, but switching engines mid-project almost always is. Your engine is the foundation of every technical decision for the next several years. Choose deliberately based on your game type, team skills, and target platforms — not based on hype or what you saw in a YouTube tutorial.</p>
+
+  <div class="sub">
+    <h3>The Major Engines Compared</h3>
+    <div class="g2">
+      <div class="mc"><div class="tag">Best for: Mobile, Indie, AR/VR, Cross-platform</div><h4>Unity (C#)</h4><p>Massive asset store, huge community, excellent documentation. 2D and 3D. Best mobile support. DOTS/ECS for performance-critical work. Largest indie install base. Royalty changed in 2023 caused controversy — verify current terms.</p></div>
+      <div class="mc"><div class="tag">Best for: AAA, FPS, Open World, Cinematics</div><h4>Unreal Engine 5 (C++ / Blueprint)</h4><p>Nanite (unlimited polygon geometry), Lumen (fully dynamic global illumination), Chaos physics. Blueprint visual scripting lowers C++ barrier. Royalty kicks in above $1M revenue. Industry standard at AAA studios.</p></div>
+      <div class="mc"><div class="tag">Best for: Indie 2D/3D, Open Source, Budget</div><h4>Godot 4 (GDScript / C#)</h4><p>Completely free, no royalties. Lightweight. Excellent 2D pipeline. Growing 3D capabilities. GDScript is Python-like and fast to learn. Strong open-source community. Ideal for budget-conscious indie devs.</p></div>
+      <div class="mc"><div class="tag">Best for: 2D Arcade, Platformers, Rapid Dev</div><h4>GameMaker (GML)</h4><p>Responsible for Undertale, Hotline Miami, Hyper Light Drifter. GML is simple. Best for 2D action/arcade. Slower to prototype complex 3D. Annual subscription model. One-time export licences per platform.</p></div>
+      <div class="mc"><div class="tag">Best for: Web Games, Browser, Rapid 2D</div><h4>Phaser (JavaScript)</h4><p>Free, open-source. Runs in the browser. Massive library of plugins. Great for HTML5 game portals and Newgrounds-style distribution. Not suited for 3D or complex simulations.</p></div>
+      <div class="mc"><div class="tag">Best for: Large Studios with Specific Needs</div><h4>Custom Engine (C++)</h4><p>Rockstar (RAGE), id Software (id Tech), EA, Bungie. Justified only when you need control no existing engine provides. Requires dedicated engine team. Almost never worth it for teams under 100 people.</p></div>
+    </div>
+  </div>
+
+  <div class="sub">
+    <h3>How to Choose the Right Engine</h3>
+    <ul class="gl">
+      <li><strong>Match genre to engine strengths:</strong> 3D open-world → Unreal 5; Mobile hyper-casual → Unity; 2D platformer → Godot or GameMaker; Browser game → Phaser. Don't use a sledgehammer for a finishing nail.</li>
+      <li><strong>Team skills trump engine prestige:</strong> The best engine is the one your team can ship a game in. A team fluent in Unity will outperform a team learning Unreal from scratch every single time.</li>
+      <li><strong>Target platform first:</strong> Console certification, mobile stores, and VR platforms all have engine-specific support levels. Check platform SDK support before you commit. Some platforms explicitly prefer certain engines.</li>
+      <li><strong>Community and asset ecosystem:</strong> A large community means tutorials, Stack Overflow answers, Asset Store plugins, and help at 2am when something breaks. Godot's community is excellent; Unreal's is vast; Unity's is enormous.</li>
+      <li><strong>Licensing and royalties:</strong> Understand the exact terms. Unreal takes 5% over $1M lifetime gross. Unity's 2023 runtime fee situation changed the calculus for many studios. Godot costs nothing, ever. Read the EULA.</li>
+      <li><strong>Performance ceiling:</strong> Does your game need thousands of simultaneous entities? Unity DOTS or Unreal's Mass Entity system. Does it need photorealistic global illumination? Unreal's Lumen. Match your technical ambitions to the engine's proven capabilities.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>Epic Games gave away Unreal Engine to commoditise the engine market and drive revenue through Fortnite and the Epic Games Store. This means UE5 is genuinely world-class for zero upfront cost. Meanwhile, large studios like Respawn (Apex Legends) use a heavily modified version of id Tech (Source engine lineage) because they needed specific features no commercial engine provided. The lesson: use a commercial engine until you can articulate exactly what it cannot do for you.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Engines:</span><span class="chip">Unity 2022+</span><span class="chip">Unreal Engine 5</span><span class="chip">Godot 4</span><span class="chip">GameMaker</span><span class="chip">Phaser 3</span><span class="chip">Defold</span><span class="chip">Cocos2d</span></div>
+</section>
+
+<!-- S03 PROGRAMMING -->
+<section id="s03" class="section" style="--sc:#60a5fa">
+  <div class="sh"><div class="sh-icon">💻</div><div class="sh-body"><div class="sh-tag">Chapter 03 · Foundation</div><h2>Programming &amp; Architecture</h2></div><div class="sh-num">03 / 20</div></div>
+  <p class="s-intro">Game code has unique constraints that software engineering textbooks don't cover: it must run at 60fps, handle emergent state from thousands of interacting entities, and be readable months later when a designer needs to tweak a value. The architecture you choose in week one will determine how painful (or pleasant) the rest of development is.</p>
+
+  <div class="sub">
+    <h3>Game Loop Architecture</h3>
+    <ul class="gl">
+      <li><strong>Fixed timestep vs variable timestep:</strong> Always use a fixed timestep for physics and game simulation (prevents non-determinism). Use variable timestep for rendering interpolation. This is the most fundamental architecture decision in your game loop.</li>
+      <li><strong>The canonical game loop:</strong> processInput() → update(fixedDelta) → render(interpolation). Physics and AI run in the fixed step. Rendering catches up with interpolated positions. This gives smooth visuals and stable physics simultaneously.</li>
+      <li><strong>Frame budget awareness:</strong> At 60fps you have 16.67ms per frame. Build your game loop aware of this constraint from the start. Profile your update() cost and know your headroom at all times.</li>
+      <li><strong>Unity's Update() trap:</strong> Calling expensive operations in Update() on hundreds of MonoBehaviours kills performance silently. Consolidate logic into manager systems, use ECS for scale, and never use Find() or GetComponent() in Update().</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Entity Component System (ECS)</h3>
+    <p>ECS is the architecture underlying most high-performance games. Instead of objects with behaviour (OOP), you have entities (IDs), components (pure data), and systems (logic that processes components). This produces cache-friendly, parallelisable code.</p>
+    <ul class="gl">
+      <li><strong>Unity DOTS / Burst Compiler:</strong> Unity's ECS implementation. Burst compiles C# to highly optimised native code. Jobs System enables multithreading. Can process millions of entities per frame where MonoBehaviour couldn't handle thousands.</li>
+      <li><strong>Unreal Mass Entity:</strong> Unreal's ECS-like system. Powers crowd simulations in Matrix Awakens demo (millions of pedestrians). Not for every feature — use it where you need scale.</li>
+      <li><strong>When to use ECS:</strong> Thousands+ of similar entities (bullets, particles, NPCs, crowds). Not for your player character, UI, or low-count complex entities. Don't ECS everything — it's a targeted performance tool.</li>
+      <li><strong>entt, Flecs (C++):</strong> Excellent ECS libraries for custom engine work. entt is header-only, used in Minecraft Bedrock Edition. Flecs supports multithreading and has a built-in query system.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Core Design Patterns for Games</h3>
+    <ul class="gl">
+      <li><strong>State Machine:</strong> Essential for player controllers, AI behaviour, game states (menu/playing/paused/dead). Hierarchical State Machines (HSMs) handle complex nested states cleanly. Every game needs this.</li>
+      <li><strong>Object Pool:</strong> Never instantiate/destroy objects at runtime. Pool bullets, particles, enemies, projectiles. Eliminates garbage collection spikes. Implement from day one for any frequently spawned object.</li>
+      <li><strong>Observer / Event System:</strong> Decouple systems with events. OnPlayerDeath fires once; AudioManager, UIManager, AchievementManager all listen independently. No direct references between unrelated systems. Use Unity Events or C# delegates/events.</li>
+      <li><strong>Command Pattern:</strong> Encapsulate input as command objects. Enables undo/redo, replay systems, and AI scripting. Every RTS and strategy game needs this for replays alone.</li>
+      <li><strong>Service Locator / Dependency Injection:</strong> A way to access global services (AudioManager, SceneManager) without static singletons. Singletons are convenient but create hidden dependencies. Use them sparingly and document them ruthlessly.</li>
+      <li><strong>Strategy Pattern:</strong> Swap AI behaviour, weapon fire modes, or movement schemes at runtime without if-chains. Define an interface, implement variants, inject the right one. Makes designer-configurable systems trivial.</li>
+      <li><strong>Factory Pattern:</strong> Centralise entity spawning. SpawnEnemy(EnemyType, position) rather than scattered Instantiate calls. Makes difficulty scaling and procedural generation clean to implement.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Memory, Performance &amp; Multithreading</h3>
+    <ul class="gl">
+      <li><strong>Understand your GC:</strong> In Unity (C#), garbage collection pauses cause frame spikes. Avoid allocations in hot paths: no LINQ in Update(), no new List() every frame, reuse string builders. Profile allocation with the Memory Profiler.</li>
+      <li><strong>Structs over classes for hot data:</strong> Structs are value types (stack allocated, cache friendly). Classes are reference types (heap allocated, pointer-chased). For data processed thousands of times per frame, structs win.</li>
+      <li><strong>Multithreading basics:</strong> Unity Job System, Unreal Task Graph. Move AI pathfinding, physics queries, and procedural generation off the main thread. Never touch Unity GameObjects from worker threads.</li>
+      <li><strong>Data-Oriented Design (DOD):</strong> Organise data for access patterns, not object hierarchies. Separate hot data (position, velocity) from cold data (name, description). CPU cache misses are often the bottleneck, not algorithmic complexity.</li>
+      <li><strong>Save systems:</strong> Implement a unified save system using the Strategy pattern — every saveable entity knows how to serialise itself. Use JSON for readability (debug builds), binary (MessagePack, Protobuf) for production. Build save versioning from the start.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>"Make it work, make it right, make it fast" — in that order. Profile before you optimise. The biggest performance wins in every game I've shipped came from fixing one or two hot paths that the profiler revealed, not from systematic micro-optimisations. That said, architecture decisions (ECS vs OOP, fixed vs variable timestep) are impossible to change later — get those right in week one. Everything else can be refactored.</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span><div>
+    <div class="cl">Common Mistake</div>
+    <p><strong>Building a custom engine when you should be building a game.</strong> Writing your own renderer, physics engine, and audio system costs 2–3 years and produces an inferior result compared to any commercial option. Build a custom engine only when you can articulate exactly which capability no existing engine provides and have a dedicated team to maintain it. Otherwise: pick an engine and ship a game.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Languages &amp; Tools:</span><span class="chip">C# (Unity)</span><span class="chip">C++ (Unreal/Custom)</span><span class="chip">GDScript (Godot)</span><span class="chip">ReSharper</span><span class="chip">Visual Studio</span><span class="chip">Rider</span><span class="chip">entt</span><span class="chip">Flecs</span></div>
+</section>
+
+<!-- S04 ART -->
+<section id="s04" class="section" style="--sc:#fd79a8">
+  <div class="sh"><div class="sh-icon">🎨</div><div class="sh-body"><div class="sh-tag">Chapter 04 · Production</div><h2>Art &amp; Visual Direction</h2></div><div class="sh-num">04 / 20</div></div>
+  <p class="s-intro">Art direction is not decoration — it's communication. Every visual choice tells the player something about the world, the tone, and what to pay attention to. The most successful indie games in history (Hollow Knight, Celeste, Hades) have a distinct visual identity that is inseparable from their identity as a product. Style is a competitive advantage.</p>
+
+  <div class="sub">
+    <h3>Art Style Selection &amp; Style Guides</h3>
+    <ul class="gl">
+      <li><strong>Match style to team capability:</strong> A 2-person team attempting photorealistic 3D will produce worse results than the same team doing a tightly constrained pixel art or flat-shaded style. Your art style must be achievable by your actual team in your actual timeline.</li>
+      <li><strong>Style coherence over technical fidelity:</strong> Players forgive low polygon counts. They do not forgive inconsistency. One style executed consistently across 40 hours of content is vastly more impressive than 10 styles that are technically superior but clash.</li>
+      <li><strong>The style guide:</strong> A mandatory document covering your exact colour palette (maximum 7–10 primary colours), line weight rules, texture density, lighting philosophy, silhouette rules for characters, and a "what not to do" section with examples. Give every artist this before they touch a single asset.</li>
+      <li><strong>Reference boards:</strong> Gather 50–100 reference images before production starts. Separate boards for: character style, environment mood, lighting reference, UI aesthetic, colour temperature. PureRef is the industry standard tool for this.</li>
+      <li><strong>Silhouette readability:</strong> Every character, enemy, and important prop must read as a clear black silhouette at thumbnail size. This is how you ensure players identify entities instantly in motion. Test every hero asset this way.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>3D Art Pipeline (AAA &amp; Indie)</h3>
+    <ul class="gl">
+      <li><strong>PBR (Physically Based Rendering) workflow:</strong> Albedo, Metallic/Roughness (or Specular/Glossiness), Normal, Ambient Occlusion maps. This is the universal standard across all modern engines. Substance Painter is the industry-standard texturing tool.</li>
+      <li><strong>Character pipeline:</strong> Concept art → High-poly sculpt (ZBrush) → Retopology (lower poly mesh) → UV unwrap → Texture baking (AO, normals from high-poly) → Texture painting (Substance Painter) → Rigging → Skinning → Animation.</li>
+      <li><strong>Environment pipeline:</strong> Concept/whitebox → Modular kit design → Greybox in engine → Model modular pieces → Texture → Place and dress → Lighting pass → Polish and optimise. Modular kits are the single biggest time-saver in environment art.</li>
+      <li><strong>LOD (Level of Detail):</strong> Every complex mesh needs 3–4 LOD levels (LOD0: full quality, LOD1: 50% tris, LOD2: 25%, LOD3: billboard). Unreal Nanite replaces this for supported geometry but not for everything. LOD dramatically reduces GPU cost at distance.</li>
+      <li><strong>Texture atlases:</strong> Combine multiple small textures into single atlas textures. Fewer texture samples per draw call = better GPU performance. Essential for mobile. Use sprite sheets for 2D.</li>
+      <li><strong>Naming conventions — commit to them day one:</strong> <code>CH_HeroWarrior_Body_Diffuse.png</code>, <code>EN_GoblinArcher_LOD0.fbx</code>. Chaotic naming conventions destroy studio productivity. Write the convention on day 1, enforce it by code review.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Technical Art &amp; Shaders</h3>
+    <ul class="gl">
+      <li><strong>Shader Graph (Unity) / Material Editor (Unreal):</strong> Node-based shader creation. Essential for stylised effects, dissolve effects, water, foliage animation, and any non-standard surface. Learn to read and write basic HLSL even if you use node-based tools.</li>
+      <li><strong>Colour theory in practice:</strong> Use complementary colours for contrast (enemies vs environment), analogous colours for harmony (calm areas), and temperature contrast (warm lights, cool shadows). A single dominant colour palette makes screenshots instantly recognisable.</li>
+      <li><strong>Technical art role:</strong> The bridge between art and engineering. Builds the tools, rigs, shader systems, and pipelines that other artists use. At AAA studios this is a dedicated role. At indie studios, your most technical artist fills it partially.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>Team Cherry made Hollow Knight with a team of 3. Their vector art style was chosen specifically because it scaled to any resolution, could be produced quickly by small hands, and was consistent across 40+ hours of content. The constraint wasn't a limitation — it was the identity. <strong>The best art direction for a small team is one where every asset can be produced by any artist on the team.</strong> Specialisation is a luxury. Design your pipeline around your actual resources.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Blender</span><span class="chip">Maya</span><span class="chip">ZBrush</span><span class="chip">Substance Painter</span><span class="chip">Photoshop</span><span class="chip">Aseprite (pixel art)</span><span class="chip">PureRef</span><span class="chip">Krita</span><span class="chip">Procreate</span></div>
+</section>
+
+<!-- S05 AUDIO -->
+<section id="s05" class="section" style="--sc:#fdcb6e">
+  <div class="sh"><div class="sh-icon">🎵</div><div class="sh-body"><div class="sh-tag">Chapter 05 · Production</div><h2>Audio &amp; Sound Design</h2></div><div class="sh-num">05 / 20</div></div>
+  <p class="s-intro">Audio is 50% of the experience and receives 5% of the budget on most indie projects. This is the single biggest quality gap between AAA and indie games. A well-designed sound environment makes a game feel three times more polished without changing a single pixel. Sound is not the last thing you add — it is the thing that makes everything else feel real.</p>
+
+  <div class="sub">
+    <h3>Sound Effects Design &amp; Implementation</h3>
+    <ul class="gl">
+      <li><strong>Layered sound design:</strong> Every impactful sound is 3+ layers: a low-frequency "body" (punch, impact weight), a mid-frequency "attack" (the crack or slap transient), and a high-frequency "tail" (air, debris, space). The combination creates richness no single recording achieves.</li>
+      <li><strong>Record everything, use nothing raw:</strong> Field recordings are the foundation. Then pitch-shift, EQ, compress, time-stretch, layer, and effect-process until the sound serves the game's world rather than the real world. A punch in a game should feel more impactful than a real punch sounds.</li>
+      <li><strong>Randomisation prevents repetition fatigue:</strong> Pool 3–5 variations of every frequently triggered sound. Randomise pitch ±3–8% and volume ±2dB on each trigger. Your footsteps, gunshots, and UI clicks must never sound mechanical.</li>
+      <li><strong>Trigger by game events, not hardcoded:</strong> Every SFX trigger goes through an audio event system (FMOD event, Wwise switch, or custom AudioManager). Never hardcode AudioSource.Play() calls scattered throughout gameplay code. Centralise and decouple.</li>
+      <li><strong>UI audio is communication:</strong> Button clicks, hover sounds, notification chimes, error tones — these are your UI's language. They tell the player what happened before the visual confirms it. Inconsistent UI audio destroys immersion more than silence would.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Music &amp; Adaptive Systems</h3>
+    <ul class="gl">
+      <li><strong>Adaptive/interactive music:</strong> Music that responds to gameplay state. Three approaches: (1) Stem layering — musical layers fade in/out based on intensity (add drums during combat, remove during exploration); (2) State-based transitions — different tracks per game state with smooth crossfades; (3) Procedural/generative music (Rez, Proteus).</li>
+      <li><strong>FMOD Studio:</strong> The industry standard audio middleware used in 70%+ of shipped games. Drag-and-drop event authoring, timeline editing, parameter-driven adaptive music, built-in mixing. Integrates with Unity and Unreal via free plugin. The free tier covers most indie games.</li>
+      <li><strong>Wwise (Audiokinetic):</strong> More powerful than FMOD, steeper learning curve, used at AAA studios (Uncharted, Cyberpunk 2077, Fortnite). Spatial audio toolkit, advanced music system, interactive mixing. Free up to a project budget threshold.</li>
+      <li><strong>Music loop design:</strong> Game music loops thousands of times. Loops must be seamless and must avoid musical patterns that trigger listener fatigue in under 30 minutes. Avoid solos, dramatic climaxes, and anything that demands resolution — save those for cutscenes.</li>
+      <li><strong>Mixing for games:</strong> Games run for 2–10 hours per session. Apply gentle dynamic range compression to prevent ear fatigue. Music should sit 6–10dB below SFX. Dialogue (VO) should be loudest and duck everything else when playing.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>3D Spatial Audio &amp; Voice Acting</h3>
+    <ul class="gl">
+      <li><strong>3D spatialisation:</strong> Distance attenuation curves, reverb zones (interior vs exterior), occlusion (muffling through walls), and obstruction (partial blockage). All major engines support this. HRTF (Head-Related Transfer Function) for VR headphone spatialisation.</li>
+      <li><strong>Voice acting direction:</strong> Actors need emotional context and scene relationship, not just the line in isolation. Run a table read first. Record 3 takes of every line (direction, intensity, pace variation). Keep raw files — you will need to re-cut later. Budget for reshoots.</li>
+      <li><strong>Localisation and VO:</strong> If the game will be localised, design audio systems for 3–5 additional VO languages from the start. Lip sync rigs tied to English timing need to flex for German (30% longer) and Japanese (completely different timing).</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>The best game audio directors say: "Sound is felt before it's heard." The sub-bass frequencies in an explosion, the slight room reverb that tells you you're underground, the subtle high-frequency sizzle that makes a magical effect feel alive — players never consciously hear these details. They just feel that the game is more real. <strong>Hire your audio director before production, not after.</strong> Audio baked into the design from day one (Celeste's music, Half-Life 2's sound design) is transformative. Audio bolted on at the end is audible wallpaper.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">FMOD Studio</span><span class="chip">Wwise</span><span class="chip">Reaper</span><span class="chip">Pro Tools</span><span class="chip">Audacity</span><span class="chip">FL Studio</span><span class="chip">iZotope RX</span><span class="chip">Logic Pro</span></div>
+</section>
+
+<!-- S06 LEVEL DESIGN -->
+<section id="s06" class="section" style="--sc:#55efc4">
+  <div class="sh"><div class="sh-icon">🗺️</div><div class="sh-body"><div class="sh-tag">Chapter 06 · Production</div><h2>Level Design</h2></div><div class="sh-num">06 / 20</div></div>
+  <p class="s-intro">Level design is the act of crafting space to produce a specific experience. It is part architecture, part game design, part storytelling, and part psychology. A great level guides the player without them feeling guided, teaches without text, and creates memorable moments through the arrangement of geometry, light, and challenge.</p>
+
+  <div class="sub">
+    <h3>The Blockout (Greybox) Methodology</h3>
+    <ul class="gl">
+      <li><strong>Blockout first, art second — always:</strong> Build every level in grey untextured geometry (blockout/whitebox) before any art assets go in. Test flow, encounter pacing, and spatial scale first. Art assets lie to you about what actually plays well. Grey boxes reveal the truth.</li>
+      <li><strong>Scale is everything:</strong> Prototype with correctly-proportioned placeholder geometry. A door that's 10% too narrow or a corridor that's 20% too short breaks spatial readability without any artist ever touching it. Use a 6ft / 1.8m human scale reference prop in every blockout.</li>
+      <li><strong>The 3 C's framework:</strong> Clarity (player always knows where to go and what to do), Challenge (appropriately difficult for the moment in the game's arc), Character (the space has personality and tells a story). Every section of every level must pass all three.</li>
+      <li><strong>Iterate before art production:</strong> Get 5–10 playtest sessions on the blockout. Change layouts cheaply in grey geometry. Once art goes in, layout changes cost 10× more. Validate every junction, every sight line, every encounter space in grey first.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Player Guidance &amp; Flow</h3>
+    <ul class="gl">
+      <li><strong>Visual language for navigation:</strong> Use light (brighter in the direction of progress), colour (warm colours draw attention, cool recede), architecture (open vs enclosed spaces signal exploration vs progress), and sound (audio cues from objectives). Never rely on a minimap alone.</li>
+      <li><strong>Breadcrumbing:</strong> Place visual goals just out of reach — a distant tower, a glowing doorway, a visible enemy — that pull the player forward without explicit instruction. The player feels like they're making autonomous decisions. They're following your invisible script.</li>
+      <li><strong>Tutorial design — teach through play:</strong> Introduce mechanics in safe, low-pressure environments before deploying them in high-stakes situations. The Zelda template: encounter mechanic in dungeon introduction → practice in minor puzzle → test in boss fight. Never use a pop-up text box when geometry can teach instead.</li>
+      <li><strong>Safe-fail spaces:</strong> When players learn something new, make failure consequence-free or minimally consequential. Teach them to trust that experimenting is rewarded. Games that punish learning kill motivation to explore your systems.</li>
+      <li><strong>Funnelling without railroading:</strong> Create the illusion of openness while maintaining design intent. Multiple valid paths to the same destination, optional areas rewarding exploration, but a clear main thread that players who want to progress can always find.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Encounter Design, Pacing &amp; Environmental Storytelling</h3>
+    <ul class="gl">
+      <li><strong>Combat encounters as puzzles:</strong> Every combat space should offer multiple approaches (stealth, direct, environmental hazards, elevation). An encounter with one valid solution is a test. An encounter with three is a puzzle that rewards player creativity and mastery.</li>
+      <li><strong>Pacing rhythm:</strong> Tension → Release → Tension → Release. After every intense encounter, give the player a moment of calm exploration or discovery. Sustained tension produces anxiety, not engagement. The exhale after the fight is as important as the fight.</li>
+      <li><strong>Environmental storytelling:</strong> Show the story through object placement, structural damage, enemy positioning, weather, lighting. A burned village with toys scattered on the ground tells more than a cutscene about what happened there. Trust the player to read the space.</li>
+      <li><strong>Modular level design:</strong> Build reusable modular kits — wall pieces, floor tiles, props — that snap together. Production goes 3–5× faster. Visual consistency is automatic. Allows a single art pass to cover a much larger game world. Used by every AAA studio.</li>
+      <li><strong>Difficulty curves:</strong> Mechanics should be introduced at 20% difficulty, practiced at 50%, and tested at full intensity. Spike difficulty before major milestones (boss gates, chapter ends), but always telegraph the spike so players feel the escalation is fair.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>The iconic moment at the start of Half-Life 2 where you emerge from the train station and see the Combine soldiers in City 17 teaches you the world's tone, establishes scale, and puts you in danger — all without a tutorial, a popup, or dialogue explaining what's happening. <strong>The best level design makes the expected behaviour the easiest path.</strong> Players should be able to "fall forward" through your levels by doing what feels natural, never needing to consult a guide for the basic experience.</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span><div>
+    <div class="cl">Common Mistake</div>
+    <p><strong>Playtesting only with your team.</strong> You and every developer on the project have designer blindness — you cannot see your level as a first-time player. Within your first 10 minutes, recruit someone who has never played your game to play it while you watch silently. Watch where they get stuck, where they go wrong, where they wander. You will discover 80% of your level design problems in 30 minutes of silent observation.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Unity ProBuilder</span><span class="chip">Unreal BSP/Modeling Mode</span><span class="chip">Tiled (2D)</span><span class="chip">LDtk</span><span class="chip">World Machine (terrain)</span><span class="chip">Houdini (procedural)</span></div>
+</section>
+
+<!-- S07 AI -->
+<section id="s07" class="section" style="--sc:#e17055">
+  <div class="sh"><div class="sh-icon">🤖</div><div class="sh-body"><div class="sh-tag">Chapter 07 · Production</div><h2>Artificial Intelligence Systems</h2></div><div class="sh-num">07 / 20</div></div>
+  <p class="s-intro">Game AI's job is not to be intelligent. Its job is to create the illusion of intelligence while producing fun, fair, readable, and predictable (in a satisfying way) behaviour. An enemy that consistently outperforms the player is technically more intelligent and entirely less fun. Design AI for experience, not capability.</p>
+
+  <div class="sub">
+    <h3>Core AI Architectures</h3>
+    <ul class="gl">
+      <li><strong>Finite State Machine (FSM):</strong> The simplest and most widely used. Define states (Idle, Alert, Chase, Attack, Flee) and transitions between them. Easy to implement, easy to debug, becomes unmanageable above ~8 states. Use for simple enemies, UI state, and game flow.</li>
+      <li><strong>Hierarchical State Machine (HSM):</strong> FSMs nested inside FSMs. A Combat state contains sub-states (Approach, Attack, Reposition). Massively reduces transition spaghetti. The right step up from flat FSMs before moving to Behaviour Trees.</li>
+      <li><strong>Behaviour Trees (BT):</strong> The industry standard for complex NPC AI. Hierarchical, modular, visual, debuggable. Nodes are Composites (Selector, Sequence, Parallel), Decorators (conditions, loops), and Leaf nodes (actions, checks). Used in Unreal's AIModule, Halo, Alien: Isolation. Scales to arbitrarily complex behaviour.</li>
+      <li><strong>Utility AI:</strong> Score-based decision making. Each possible action gets a score (how hungry? how threatened? how much ammo?) and the highest score wins. Produces surprisingly natural, emergent behaviour. Excellent for survival games, RPGs, and open worlds. Used in The Sims series.</li>
+      <li><strong>GOAP (Goal-Oriented Action Planning):</strong> AI sets a goal (reach base, kill player, find food) and plans a sequence of actions to achieve it. Highly flexible and emergent. Used in F.E.A.R. (notoriously good AI). Complex to implement correctly.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Pathfinding &amp; Movement</h3>
+    <ul class="gl">
+      <li><strong>A* algorithm:</strong> The standard for grid-based pathfinding. Find the lowest-cost path via heuristic search. Understand the heuristic: Manhattan distance for grid, Euclidean for open spaces. Pre-bake navigation data where possible.</li>
+      <li><strong>NavMesh (Navigation Mesh):</strong> A polygon mesh overlaid on the walkable surfaces of a 3D world. Agents pathfind across this mesh. Unity NavMesh, Unreal NavMesh. Always re-bake after geometry changes. Supports dynamic obstacles with NavMesh Obstacles.</li>
+      <li><strong>Steering behaviours (Craig Reynolds):</strong> Seek, Flee, Arrive, Wander, Separation, Cohesion, Alignment. Combine these forces for realistic group movement. Boids flocking emerges from just three rules: separation, alignment, cohesion. Used everywhere for crowds, swarms, and fish shoals.</li>
+      <li><strong>Influence maps:</strong> A spatial data structure (grid overlay) storing values like enemy threat level, resource density, or allied presence. AI queries this map to make informed spatial decisions without expensive pathfinding. Used for flanking, retreat decisions, and tactical AI.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>AI Design Philosophy &amp; Perception</h3>
+    <ul class="gl">
+      <li><strong>Perception systems are critical:</strong> An enemy that sees through walls or reacts before the animation plays feels unfair. Separate visual cone (cone + raycast), audio range (sphere query with occlusion), and memory (last known position). All AAA stealth games live or die on perception systems.</li>
+      <li><strong>Telegraphing:</strong> Every AI attack must be telegraphed before it lands. Wind-up animation, audio cue, visual indicator. This makes AI feel fair even when it's punishing. Alien: Isolation's Xenomorph is genuinely terrifying precisely because it telegraphs beautifully.</li>
+      <li><strong>AI cheats and why that's fine:</strong> Most game AI "cheats" in ways players never see: omniscient director AI (Left 4 Dead's AI Director), perfect knowledge of player position after detection, rubber-banding difficulty. This serves the game experience. Perfect simulation is not the goal.</li>
+      <li><strong>Machine learning in games:</strong> Narrow use cases: matchmaking rating systems, content recommendation, NPC dialogue generation (emerging). Real-time gameplay ML AI (like OpenAI Five) is impressive research but impractical for shipped games. Don't use ML where a behaviour tree works perfectly fine.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight — Left 4 Dead's AI Director</div>
+    <p>Valve's AI Director in Left 4 Dead doesn't control individual zombies — it controls the emotional experience. It monitors player stress (health, ammo, deaths) and adjusts the flow of the game: ramping up enemy spawns when players are comfortable, backing off when they're overwhelmed, and creating moments of eerie silence before exploding into chaos. This is AI as experience designer, not AI as enemy controller. <strong>Think about what emotional state your AI systems are creating, not what decisions they are making.</strong></p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools &amp; Libraries:</span><span class="chip">Unreal AIModule / EQS</span><span class="chip">Unity NavMesh / ML-Agents</span><span class="chip">Behaviour Designer (Unity)</span><span class="chip">NodeCanvas</span><span class="chip">GGML / LLaMA (generative NPC)</span></div>
+</section>
+
+<!-- S08 NETWORKING -->
+<section id="s08" class="section" style="--sc:#6c5ce7">
+  <div class="sh"><div class="sh-icon">🌐</div><div class="sh-body"><div class="sh-tag">Chapter 08 · Production</div><h2>Networking &amp; Multiplayer</h2></div><div class="sh-num">08 / 20</div></div>
+  <p class="s-intro">Multiplayer is one of the hardest engineering challenges in game development. Latency is physics — light travels at a finite speed, and no architecture can change that. Every networking system is a set of trade-offs between consistency, responsiveness, bandwidth, and implementation complexity. Choose your trade-offs deliberately.</p>
+
+  <div class="sub">
+    <h3>Architecture Fundamentals</h3>
+    <ul class="gl">
+      <li><strong>Client-Server (Authoritative):</strong> One server is the source of truth. Clients send inputs; server validates and broadcasts state. Mandatory for any competitive game. Cheat-resistant. Higher latency cost. Used in Fortnite, CS:GO, Valorant, virtually all competitive multiplayer.</li>
+      <li><strong>Peer-to-Peer (P2P):</strong> Clients communicate directly. Lower infrastructure cost. Host advantage. Cheat-vulnerable (client is authoritative). Fine for small co-op games and fighting games with rollback netcode. Dying for competitive games.</li>
+      <li><strong>Dedicated servers vs relay:</strong> Dedicated servers (you control the machine) give lowest latency and highest security. Relay servers (Photon, Steam Datagram Relay) handle NAT traversal for P2P without exposing IP addresses. Pick dedicated for competitive; relay is fine for casual co-op.</li>
+      <li><strong>Server authority is non-negotiable for competitive:</strong> Never trust the client's position, health, or damage values in a competitive game. The server calculates all game state. Clients predict and correct. Anything the client controls unilaterally is a cheat vector.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Lag Compensation &amp; Netcode</h3>
+    <ul class="gl">
+      <li><strong>Delay-based netcode:</strong> Both clients wait N frames before processing input to ensure synchronisation. Simple to implement. Feels unresponsive at high latency. Used in Street Fighter IV and earlier fighting games. Largely superseded by rollback.</li>
+      <li><strong>Rollback netcode:</strong> Both clients simulate immediately with predicted input. When real input arrives and differs from prediction, roll back game state and re-simulate forward. Feels responsive even at high latency. GGPO is the gold-standard library. Used in all modern fighting games (Guilty Gear, MK11, Soul Calibur VI).</li>
+      <li><strong>Client-side prediction:</strong> The client predicts its own actions immediately (movement feels instant). The server authoritative result arrives later. If it differs from prediction, the client corrects (reconciliation). Visible as "rubber-banding" when network is poor. Standard in all FPS games.</li>
+      <li><strong>Lag compensation for hitscan:</strong> When a player shoots at 100ms ping, they see their target where it was 100ms ago. Server rewinds positions by the client's latency, checks if the shot hit there, then awards the kill. Valve's implementation in CS is the seminal reference.</li>
+      <li><strong>Interest management:</strong> Don't send every player's state to every other player. Define zones of interest — only send data about entities within a relevant radius. Reduces bandwidth dramatically for large-scale games (200+ players).</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Matchmaking, Backend &amp; Networking Libraries</h3>
+    <ul class="gl">
+      <li><strong>Matchmaking algorithms:</strong> Elo (chess-derived, simple), TrueSkill (Microsoft, Bayesian, better for teams), custom hybrid (skill + ping + wait time weighted). Balance the formula — ping locality should outweigh small skill differences for most games.</li>
+      <li><strong>Lobby systems:</strong> Create, browse, join, invite. Integrate with platform friends lists (Steam, PSN, Xbox). Steam Lobbies API is the simplest entry point for PC. Epic Online Services is free and cross-platform.</li>
+      <li><strong>Networking libraries:</strong> Mirror (Unity, free, active), Fish-Networking (Unity, high-performance), Netcode for GameObjects (Unity, first-party), Photon Fusion (managed cloud, scaling handled for you), Epic Online Services (cross-platform, free). For Unreal: built-in replication system is industry-grade.</li>
+      <li><strong>Backend services:</strong> PlayFab (Microsoft, generous free tier), Nakama (open source), GameSparks, Firebase (for simple leaderboards/save data). Handle player accounts, cloud saves, leaderboards, in-game economy, and analytics through these rather than building custom.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>If you're planning a multiplayer game, <strong>build networked from day one.</strong> Retrofitting networking into a singleplayer codebase is one of the most painful engineering projects in game development. Every assumption about shared state, every direct reference between systems, every non-deterministic random call becomes a problem. Design your game's state management, your input system, and your entity architecture for networking before writing a single gameplay system.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools &amp; Services:</span><span class="chip">Mirror</span><span class="chip">Fish-Networking</span><span class="chip">Photon Fusion</span><span class="chip">Epic Online Services</span><span class="chip">PlayFab</span><span class="chip">Nakama</span><span class="chip">Steam API</span><span class="chip">Wireshark</span></div>
+</section>
+
+<!-- S09 UI/UX -->
+<section id="s09" class="section" style="--sc:#00cec9">
+  <div class="sh"><div class="sh-icon">🖱️</div><div class="sh-body"><div class="sh-tag">Chapter 09 · Production</div><h2>UI / UX Design</h2></div><div class="sh-num">09 / 20</div></div>
+  <p class="s-intro">Game UI communicates the state of the game to the player. Game UX is the design of the total experience of interacting with the game's systems. The goal of both is to disappear — when UI is done perfectly, players feel they are directly inhabiting the game world, not operating a software application.</p>
+
+  <div class="sub">
+    <h3>UI Paradigms &amp; HUD Design</h3>
+    <ul class="gl">
+      <li><strong>Diegetic UI:</strong> Exists within the game world. Dead Space's health bar on the spine. The pip-boy in Fallout. Invisible to the camera but real in the fiction. Extraordinarily immersive. High production cost. Reserve for your most important, most seen elements.</li>
+      <li><strong>Non-diegetic UI:</strong> Exists outside the game world (traditional HUD). Health bars, minimaps, ammo counts. Maximum clarity, zero immersion cost justified by necessity. The majority of UI in any game.</li>
+      <li><strong>Spatial / World-space UI:</strong> Exists in 3D space but not in the game fiction. Health bars floating above enemies, waypoint markers, interaction prompts. Best when attached to in-world objects to reduce HUD clutter.</li>
+      <li><strong>Minimum information principle:</strong> Every HUD element requires the player to take their eyes off the game world. Show only what the player cannot figure out from context. Removing an element is almost always better than adding one. Test your HUD with it disabled entirely first.</li>
+      <li><strong>HUD tuning pass:</strong> Dedicated pass where UI designers ask "does the player actually need this right now?" for every element. The best HUD is one the player forgets is there. TLOU2, God of War, RDR2 all have masterclass minimalist HUDs.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Accessibility — Non-Negotiable</h3>
+    <ul class="gl">
+      <li><strong>Colourblind modes:</strong> 8% of men have some form of colour vision deficiency. Provide at minimum: Deuteranopia (red-green), Protanopia (red-green shifted), Tritanopia (blue-yellow) modes. Never convey critical information by colour alone — pair with shape, pattern, or text.</li>
+      <li><strong>Text scaling:</strong> Allow UI text size to scale from 80% to 150% minimum. Subtitle text must be readable at 3m viewing distance on TV for console games. White text on a darkened background, not white on white.</li>
+      <li><strong>Remappable controls:</strong> Every input in your game must be remappable by the player. This is a baseline accessibility requirement, not a feature. Platform certification now requires it on PlayStation and Xbox.</li>
+      <li><strong>Motor accessibility:</strong> Toggle vs hold options for sustained inputs. Adjustable aim assist. Input simplification modes. Slow-motion options for reflex-critical sequences. These features are used by more players than you expect — not just those with disabilities.</li>
+      <li><strong>The AbleGamers playbook:</strong> AbleGamers, Can I Play That, and SpecialEffect publish free accessibility guidelines. Read them before your UI phase begins. Implementing accessibility at the design stage costs 10% of implementing it at QA.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Controller Navigation, Mobile &amp; Feedback</h3>
+    <ul class="gl">
+      <li><strong>Controller-first UI design:</strong> Spatial D-pad/stick navigation requires every interactive element to have a clear "next" in all four directions. Visual focus states must be obvious. No element should be unreachable by button. Test every menu screen with no mouse.</li>
+      <li><strong>Mobile UI fundamentals:</strong> Minimum 44×44pt touch targets (Apple HIG). Place critical controls in the bottom 60% of screen (thumb reach). Respect safe areas (notches, home indicator). Design for both portrait and landscape if applicable. Fat finger error margin: add 8pt padding around every tap target.</li>
+      <li><strong>Feedback loops:</strong> Every player action needs a response. Visual (flash, shake, particle), audio (click, impact, chime), haptic (controller rumble on PS5/Xbox Series). Feedback latency above 100ms breaks the feeling of direct control. Never let an action go silent.</li>
+      <li><strong>UI animation timing:</strong> 150–250ms for most transitions (panel open, tooltip appear). 80–120ms for button state changes (press, hover). 300–400ms for full-screen transitions. Use ease-out for elements entering the screen, ease-in for elements leaving. Asymmetric timing feels more natural.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>Naughty Dog UI director Robyn Gray: "The best UI is the UI that doesn't feel like UI." The Last of Us Part II has menus that look like handwritten notes found in the world. Every system design choice asked 'how would Joel and Ellie have built this in the apocalypse?' When your UI has a fictional justification for existing, players forgive its limitations and engage with it as part of the world rather than fighting it as software.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Unity UI Toolkit</span><span class="chip">Unity UGUI</span><span class="chip">Unreal UMG</span><span class="chip">Figma (prototyping)</span><span class="chip">Coherent GT</span><span class="chip">TextMeshPro</span></div>
+</section>
+
+<!-- S10 ANIMATION -->
+<section id="s10" class="section" style="--sc:#fc5c65">
+  <div class="sh"><div class="sh-icon">✨</div><div class="sh-body"><div class="sh-tag">Chapter 10 · Production</div><h2>Animation &amp; VFX</h2></div><div class="sh-num">10 / 20</div></div>
+  <p class="s-intro">Animation is acting. Every movement communicates character, intent, weight, and emotional state. VFX is the punctuation — the hit sparks, magic trails, and destruction effects that make the world feel reactive. Together they are the most visceral dimension of game feel. A game can look mediocre and feel incredible purely through superb animation and VFX.</p>
+
+  <div class="sub">
+    <h3>Character Animation Pipeline</h3>
+    <ul class="gl">
+      <li><strong>Rigging and skinning:</strong> Joint hierarchy (skeleton) determines animation capabilities. Control rig provides animator-friendly controls above the joint hierarchy. Skin weights determine how mesh deforms around joints. Bad skin weights = bad deformation at joints. This requires dedicated time — don't rush skinning.</li>
+      <li><strong>Blend trees:</strong> Blend between animations based on parameters. A movement blend tree blends Idle → Walk → Run based on velocity, blends between 8 directional variants based on direction. The transition must be seamless. Unity Animator / Unreal AnimBP both implement this as a visual graph.</li>
+      <li><strong>Animation state machine (ASM):</strong> Manages transitions between animation states (Idle, Run, Jump, Fall, Land, Attack, Death). More complex than a regular FSM because transitions must handle animation timing and blending curves. Plan your ASM on paper before implementing — it will grow more complex than expected.</li>
+      <li><strong>Inverse Kinematics (IK):</strong> Calculates joint rotations from a target position (foot placement on uneven terrain, hand gripping a surface, eyes tracking a target). Foot IK is mandatory for any third-person game with terrain variation. Unity IK, Unreal Control Rig, Final IK (Unity plugin).</li>
+      <li><strong>Motion capture (mocap):</strong> Records real performer movement for transfer to a game rig. iPhone ARKit (face), Xsens (full body, ~$5K), OptiTrack / Vicon (studio-grade, $50K+). Clean mocap data in MotionBuilder, retarget to game rig. Even budget mocap dramatically improves animation quality.</li>
+      <li><strong>Secondary motion:</strong> Hair, cloth, jewellery, tails — parts that move in response to primary animation. Adds enormous life for relatively low effort. Often overlooked. Even a subtle hair secondary pass on a character makes them feel 30% more alive. Unity Cloth component, Unreal Physical Animation.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>VFX — Particles, Shaders &amp; Post-Processing</h3>
+    <ul class="gl">
+      <li><strong>Particle systems:</strong> Unity VFX Graph (GPU particles, thousands simultaneously), Unity Particle System (CPU, fewer, scriptable), Unreal Niagara (most powerful — GPU + CPU + custom modules). Use GPU particles for ambient effects (fire, smoke, rain). CPU particles for gameplay-critical effects that need scripted behaviour.</li>
+      <li><strong>VFX design principles:</strong> Every effect must communicate information: hit direction, damage type, status effect, ability readiness. Effects must read in 0.2 seconds at full gameplay speed. Over-designed VFX obscure gameplay. Restraint is a professional skill — add elements until it breaks, then remove one.</li>
+      <li><strong>Post-processing stack:</strong> Bloom (glow around bright emissives), colour grading (LUT-based, tone curves), vignette, depth of field (cutscenes/focus moments), chromatic aberration (impact moments, use sparingly), screen space ambient occlusion (SSAO), motion blur. These transform a game's atmosphere for almost zero gameplay performance cost.</li>
+      <li><strong>Shader-based VFX:</strong> Dissolve effects, heat shimmer, hologram distortion, magical auras — all implemented as custom shaders. Often more performant and more controllable than particle systems for these use cases. Learn Shader Graph / Material Editor for this work.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>The 12 principles of animation (Disney, from "The Illusion of Life") apply directly to game animation: Squash and Stretch, Anticipation, Staging, Straight Ahead/Pose to Pose, Follow Through, Slow In/Slow Out, Arc, Secondary Action, Timing, Exaggeration, Solid Drawing, Appeal. Every professional game animator knows these cold. Hades is widely considered the benchmark for indie game animation precisely because Supergiant applied these principles systematically to every character in the game.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Blender (rigging)</span><span class="chip">Maya</span><span class="chip">MotionBuilder</span><span class="chip">Unity VFX Graph</span><span class="chip">Unreal Niagara</span><span class="chip">After Effects (2D VFX)</span><span class="chip">Final IK</span></div>
+</section>
+
+<!-- S11 PHYSICS -->
+<section id="s11" class="section" style="--sc:#2bcbba">
+  <div class="sh"><div class="sh-icon">⚛️</div><div class="sh-body"><div class="sh-tag">Chapter 11 · Production</div><h2>Physics &amp; Simulation</h2></div><div class="sh-num">11 / 20</div></div>
+  <p class="s-intro">Most "physics" in games is an elaborate lie. The explosion that sends a car flying, the cloth that ripples as a character runs, the ragdoll that crumples on death — most of these are choreographed approximations designed to look right rather than be right. Real physics simulation is expensive; the art is knowing when to simulate and when to fake it convincingly.</p>
+
+  <div class="sub">
+    <h3>Physics Engines &amp; Rigid Bodies</h3>
+    <ul class="gl">
+      <li><strong>Physics engine landscape:</strong> PhysX (NVIDIA, default in Unity and Unreal), Havok (EA Sports, Bethesda, once dominant), Bullet (open source, used in Blender), Box2D (standard for 2D games), Jolt Physics (emerging, open source, excellent performance). PhysX is the safe choice for most projects.</li>
+      <li><strong>Rigid body fundamentals:</strong> A rigid body has mass, drag (linear and angular), and constraints. Add a Collider/Collision Shape to define its physical shape. The physics engine resolves forces, gravity, and collision responses automatically. Start here for any physically simulated object.</li>
+      <li><strong>Collision detection modes:</strong> Discrete (fast, risks tunnelling at high velocity — bullets pass through walls), Continuous (continuous collision detection, expensive, use for fast-moving objects), Speculative (hybrid, Unity's recommendation for most dynamic objects). Choose per object based on its velocity profile.</li>
+      <li><strong>Physics layers and collision matrix:</strong> Define which layers collide with which other layers. Player vs Environment: yes. Bullet vs Bullet: no. UI vs Physics: never. The collision matrix is one of the most powerful performance tools available — most objects should ignore most other objects.</li>
+      <li><strong>Constraints and joints:</strong> Hinge (door, wheel), Fixed (two bodies as one), Distance (rope, chain), Spring (suspension), Configurable (custom). Joints create compound physics objects. Vehicle suspension, chain bridges, pendulums — all built from constraint primitives.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Vehicle Physics, Ragdolls &amp; Advanced Simulation</h3>
+    <ul class="gl">
+      <li><strong>Vehicle physics:</strong> Ackermann steering geometry (front wheels turn at different radii), spring-damper suspension per wheel, pacejka tyre friction curves (longitudinal and lateral forces). Unity WheelCollider, Unreal Chaos Vehicle. Don't reinvent from scratch — these are complex enough using the built-in components.</li>
+      <li><strong>Ragdoll systems:</strong> A skeleton of rigid bodies connected by joints. Toggle between animation-driven (kinematic) and physics-driven (dynamic) at the moment of death/impact. Blend animation + physics for "procedural ragdoll" — more natural than instant physics takeover. Physics-heavy, use LOD (disable at distance).</li>
+      <li><strong>Cloth and soft bodies:</strong> Unity Cloth component, Unreal Clothing Tool. Extremely expensive at high mesh density. Constrain well (capes, skirts, banners work; full-body soft bodies don't ship in real-time games). GPU cloth simulation now viable for hero characters only.</li>
+      <li><strong>Deterministic physics:</strong> Same inputs always produce same outputs. Required for: replay systems, lockstep networking, and rollback netcode. Requires fixed timestep, same math library, and carefully managed random seeds. Never rely on floating-point operations being deterministic across platforms without explicit fixed-point math.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight — Fake It First</div>
+    <p>GTA V uses a combination of real physics simulation for player-controlled vehicles and highly optimised fake physics for ambient world objects (pedestrians, distant traffic, background ragdolls). The rule at Rockstar: "If the player isn't touching it and it isn't in focus, simulate it as cheaply as possible." A trigger volume that plays a canned animation is indistinguishable from a rigid body simulation to a player watching from the corner of their eye. <strong>Always ask: do I need simulation, or do I need the appearance of simulation?</strong></p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">PhysX (Unity/Unreal)</span><span class="chip">Havok</span><span class="chip">Bullet Physics</span><span class="chip">Box2D</span><span class="chip">Jolt Physics</span><span class="chip">Unity Cloth</span><span class="chip">Unreal Chaos</span></div>
+</section>
+
+<!-- S12 NARRATIVE -->
+<section id="s12" class="section" style="--sc:#45aaf2">
+  <div class="sh"><div class="sh-icon">📖</div><div class="sh-body"><div class="sh-tag">Chapter 12 · Production</div><h2>Narrative &amp; Writing</h2></div><div class="sh-num">12 / 20</div></div>
+  <p class="s-intro">Writing for games is unlike any other medium. The player is an active agent, not a passive audience. Your story must survive contact with that agency — it must feel authored and intentional while simultaneously making the player feel like the protagonist of their own story. Ludonarrative dissonance, branching dialogue, and environmental storytelling are unique challenges with no film or literary equivalent.</p>
+
+  <div class="sub">
+    <h3>Story Structure &amp; Ludonarrative Design</h3>
+    <ul class="gl">
+      <li><strong>Story structures that work in games:</strong> Three-act (clear beginning/middle/end, good for linear games), Hero's Journey (character arc with clear transformation — God of War 2018), In Medias Res (start in the action, fill in context — Nier: Automata), Environmental Mystery (player assembles story from environmental evidence — Dark Souls, Disco Elysium).</li>
+      <li><strong>Ludonarrative consonance:</strong> When mechanics and story reinforce each other. The Last of Us: the game is brutal because the world is brutal, and the story is about what violence costs you. The mechanics are the story. This is the gold standard. Design systems that embody your themes.</li>
+      <li><strong>Ludonarrative dissonance:</strong> When mechanics contradict story. Cutscene Nathan Drake is a caring hero; gameplay Nathan Drake kills 300 mercenaries. This is the classic Naughty Dog critique. Acknowledge it in design — either embrace the dissonance with self-awareness or resolve it by aligning mechanics with theme.</li>
+      <li><strong>Pacing narrative with gameplay:</strong> Story beats must interleave with gameplay beats, not interrupt them. A cutscene after every combat encounter teaches players to dread cutscenes. A revelation at a natural pause point (a safe room, a viewpoint, after a boss) rewards progress without breaking flow.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Branching Dialogue &amp; Interactive Narrative</h3>
+    <ul class="gl">
+      <li><strong>Branching models:</strong> Hub-and-spoke (return to a central point after branches — most RPGs), linear with variation (TLOU — mostly linear with reaction variations), full branching tree (unique paths, high content cost), modular reactive (Disco Elysium — variables react to everything you do, content recombines). Choose based on your budget for content, not your ambition.</li>
+      <li><strong>Dialogue tools:</strong> Ink (narrative scripting language, powers 80 Days, Sable, many others, free, integrates everywhere), Yarn Spinner (Ink-like, Unity-first, free), Articy:Draft (visual authoring tool, paid, used by large teams), Twine (web-based, great for prototyping branching structure before committing to engine integration).</li>
+      <li><strong>Content budget for branching:</strong> A full branch that 50% of players see and is written, voiced, animated, and QA'd at the same quality as the main branch costs 4× a linear equivalent scene. Plan your branching with your production budget in mind. Meaningful choice is about perception of consequence, not volume of unique content.</li>
+      <li><strong>Writing dialogue for performance:</strong> Write to the emotional truth of the moment, not the information to convey. Give voice actors subtext. "Fine" means something completely different in 20 different emotional contexts. Line notes on delivery ("resigned, not angry") are as important as the line itself.</li>
+      <li><strong>Environmental storytelling:</strong> Object placement, structural damage, enemy positioning, lore notes, graffiti, and weather tell story without words. Dark Souls' item descriptions and Firewatch's environmental beats tell richer stories than most games' cutscenes. Trust the player to read the world.</li>
+      <li><strong>Localisation pipeline:</strong> Externalise every string from day one. Never hardcode text. Use a string table (CSV, JSON, or your engine's localisation system). Budget for 30–40% text expansion (German, Finnish), zero expansion (Japanese requires complete re-layout). Hire a localisation manager, not just translators — cultural adaptation matters as much as translation.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>Disco Elysium has no combat system. Every conflict is resolved through dialogue and skill checks. This was a deliberate narrative design decision: the game's theme is failure, self-destruction, and redemption, and a combat system would have provided an escape from those themes. The absence of a system can be as powerful a design statement as its presence. <strong>Every system you implement makes an argument about what the game is about.</strong> Design your mechanics as arguments.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Ink / Inky</span><span class="chip">Yarn Spinner</span><span class="chip">Articy:Draft</span><span class="chip">Twine</span><span class="chip">Dialogic (Godot)</span><span class="chip">Google Sheets (string tables)</span></div>
+</section>
+
+<!-- S13 PERFORMANCE -->
+<section id="s13" class="section" style="--sc:#ff7675">
+  <div class="sh"><div class="sh-icon">⚡</div><div class="sh-body"><div class="sh-tag">Chapter 13 · Quality</div><h2>Performance &amp; Optimisation</h2></div><div class="sh-num">13 / 20</div></div>
+  <p class="s-intro">Performance is a feature. A technically mediocre game at 60fps feels better than a technically impressive game at 30fps. Players attribute frame rate drops to "bad controls" and "bad game feel" — they rarely identify the real cause. Performance problems found at ship are catastrophically expensive to fix. Profile continuously from day one, not at the end.</p>
+
+  <div class="sub">
+    <h3>Frame Budget &amp; CPU Optimisation</h3>
+    <ul class="gl">
+      <li><strong>Know your frame budget:</strong> 60fps = 16.67ms total budget. 30fps = 33.33ms. A common professional allocation at 60fps: Rendering ~6ms, Physics ~2ms, AI/Gameplay ~3ms, Audio ~1ms, Input/Misc ~2ms, Platform/OS overhead ~2ms. Measure your budget usage constantly throughout development.</li>
+      <li><strong>Profile before you optimise:</strong> Use Unity Profiler, Unreal Insights, PIX, RenderDoc, Intel VTune. Identify the actual bottleneck before changing code. Optimising the wrong system wastes time and can introduce new bugs. "It feels slow" is not a profiling methodology.</li>
+      <li><strong>CPU hot paths — what to fix:</strong> Expensive Update() calls (consolidate into manager systems), frequent memory allocations (GC spikes in Unity), N² algorithms in entity collision checks, synchronous I/O on the main thread, reflection and type checking at runtime. These are the most common offenders.</li>
+      <li><strong>Unity Jobs System / Unreal Task Graph:</strong> Move expensive operations off the main thread. Pathfinding recalculations, procedural mesh generation, physics queries, AI decision-making — all valid candidates for parallel execution. Unity Burst compiler produces near-native performance from C# jobs.</li>
+      <li><strong>Object pooling — implement from week one:</strong> Every frequently spawned/destroyed object (bullets, particles, enemies, UI elements) must use an object pool. Instantiate/Destroy causes GC pressure in Unity and is expensive in every engine. Pool 20–50 of each type at startup. Never pay instantiation cost at runtime.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>GPU Optimisation &amp; Memory Management</h3>
+    <ul class="gl">
+      <li><strong>Draw call reduction:</strong> Every "draw call" is a command from CPU to GPU. Fewer draw calls = better performance, especially on mobile. Combine meshes that share materials (static batching), use GPU instancing for repeated meshes (trees, rocks, enemies), use sprite atlases for 2D. Aim for under 500 draw calls on mobile, under 2000 on PC.</li>
+      <li><strong>Overdraw:</strong> Rendering the same pixel multiple times (alpha-blended particles stacked on screen). Kills mobile GPU performance. Profile with RenderDoc's overdraw view. Limit particle alpha layers, use opaque materials where possible, and cull aggressively.</li>
+      <li><strong>Occlusion culling:</strong> Don't render what the camera can't see. Unity's built-in occlusion culling bakes visibility data at edit time. Unreal's Hardware Occlusion Queries runs at runtime. Critical for indoor environments and dense cities. Always validate occlusion data after major level changes.</li>
+      <li><strong>Level of Detail (LOD):</strong> Use LOD groups for all complex geometry (characters, buildings, vegetation). LOD0 at close range, LOD1 at medium, LOD2 at far, LOD3 or billboard sprite at maximum distance. Unreal Nanite eliminates this for most geometry but not all (skeletal meshes still need LOD).</li>
+      <li><strong>Memory management:</strong> Know your memory budget per platform (PC has headroom, mobile is strict — target 1.5–2GB max, Switch has 4GB total). Use Addressable Assets (Unity) / Asset Streaming (Unreal) to stream content in and out. Never load everything at scene start. Profile memory continuously with the Memory Profiler.</li>
+      <li><strong>Build size optimisation:</strong> 100MB is a psychological barrier for mobile downloads. Compress textures (ASTC for mobile), compress audio (Vorbis for background music, ADPCM for short SFX), strip unused code and shaders, remove unused engine features. On mobile, every MB costs you conversion rate.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>The 80/20 rule applies brutally to game performance: 80% of your frame time is consumed by 20% of your code. The profiler will always reveal that you have 2–3 systems consuming most of your budget, not 50 systems each consuming a little. <strong>Fix the 2–3 big things first.</strong> At Naughty Dog, engine engineers say they spend 90% of optimisation time on 5% of systems. Identify your frame hogs with data, fix them specifically, measure the result, repeat.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Unity Profiler</span><span class="chip">Unreal Insights</span><span class="chip">RenderDoc</span><span class="chip">PIX (Xbox)</span><span class="chip">Intel VTune</span><span class="chip">Xcode Instruments (iOS)</span><span class="chip">Android GPU Inspector</span></div>
+</section>
+
+<!-- S14 TESTING -->
+<section id="s14" class="section" style="--sc:#00b894">
+  <div class="sh"><div class="sh-icon">🧪</div><div class="sh-body"><div class="sh-tag">Chapter 14 · Quality</div><h2>Testing &amp; QA</h2></div><div class="sh-num">14 / 20</div></div>
+  <p class="s-intro">QA is not a phase at the end of development — it is a continuous process that begins on day one. A bug not found in development costs 1× to fix. A bug found in QA costs 10×. A bug that ships costs 100× in patch cost, reputation damage, and review impact. Build quality in from the beginning; you cannot test quality into a product at the end.</p>
+
+  <div class="sub">
+    <h3>Testing Types &amp; Methodologies</h3>
+    <ul class="gl">
+      <li><strong>Functional testing:</strong> Does it work as specified? Every feature, every edge case. Written against the design spec. QA writes test cases from the GDD. The GDD must exist for functional testing to be possible — another reason to write it.</li>
+      <li><strong>Regression testing:</strong> After every code change, does previously working functionality still work? Automated regression suites catch these instantly. Without automation, regression testing grows from hours to weeks as the game grows.</li>
+      <li><strong>Performance testing:</strong> Maintain a performance benchmark scene — a worst-case scenario level with maximum entities, effects, and draw calls. Run it on your lowest spec target hardware weekly. Performance regressions are invisible until they're catastrophic.</li>
+      <li><strong>Stress testing:</strong> Run the game continuously for 8 hours. Spawn everything. Fill every inventory. Crash it with edge cases. Memory leaks, state corruption, and integer overflow bugs are invisible in short sessions and catastrophic in long ones.</li>
+      <li><strong>Playtesting vs QA testing:</strong> QA testing verifies the game works as designed. Playtesting discovers whether the design is fun and clear. Both are mandatory and neither replaces the other. Playtesting sessions need a moderator, an observer, and a structured debrief.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Bug Tracking, Severity &amp; Automated Testing</h3>
+    <ul class="gl">
+      <li><strong>Severity system — everyone must use the same scale:</strong> P0 (ship blocker — game crashes on launch), P1 (release blocker — critical feature broken or data corruption), P2 (must fix before ship — significant gameplay bug), P3 (fix if time permits — notable but not critical), P4 (cosmetic — typo, visual glitch). Every team member uses these labels identically.</li>
+      <li><strong>Bug tracking tools:</strong> Jira (enterprise standard, powerful, complex), Linear (modern, fast, beautiful, indie favourite), GitHub Issues (adequate for small teams), Notion Databases (flexible but needs structure). A bug not tracked does not exist. A bug without a reproducible test case cannot be verified fixed.</li>
+      <li><strong>Automated testing in games:</strong> Unit tests for pure systems (inventory math, damage calculation, pathfinding algorithms). Integration tests for save/load, state persistence, scene loading. Automated build verification (game boots, gets to main menu, no crash). NUnit (Unity), Catch2 (C++), Unreal Automation System.</li>
+      <li><strong>Alpha / Beta / Gold stages:</strong> Alpha = all features present, game is playable end-to-end, many bugs. Beta = feature-locked (no new features), content-complete, bug fixing only. Release Candidate = all known P0-P1 bugs fixed, submitted for cert. Gold Master = certified, ready to ship. These gates are non-negotiable.</li>
+      <li><strong>Crash reporting:</strong> Integrate a crash reporter before alpha: Unity Cloud Diagnostics, Sentry, BugSplat, or Backtrace. Every crash generates a stack trace and device profile automatically. Triage crash reports by frequency × severity. Fix your top 5 crash causes before launch.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>The industry calls it "eating your own dog food" — every developer on the team should play the game for at least 30 minutes every week, playing systems they did not build. You will find bugs, flow issues, and design problems that no QA pass would ever surface, because you will play the game incorrectly in exactly the ways a real player would. At Bungie, every engineer plays Destiny weekly as part of their job requirements. The game you ship is the game you play, not the game you build.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Jira</span><span class="chip">Linear</span><span class="chip">GitHub Issues</span><span class="chip">Sentry</span><span class="chip">BugSplat</span><span class="chip">Unity Test Framework</span><span class="chip">Unreal Automation</span></div>
+</section>
+
+<!-- S15 MONETIZATION -->
+<section id="s15" class="section" style="--sc:#ffeaa7">
+  <div class="sh"><div class="sh-icon">💰</div><div class="sh-body"><div class="sh-tag">Chapter 15 · Business</div><h2>Monetisation &amp; Business Model</h2></div><div class="sh-num">15 / 20</div></div>
+  <p class="s-intro">Monetisation is not just about how you charge for your game — it is a design discipline. Every monetisation mechanic creates incentives that shape player behaviour, which shapes your game's design. The most sustainable monetisation strategy aligns the business's interest with the player's enjoyment rather than against it.</p>
+
+  <div class="sub">
+    <h3>Business Model Selection</h3>
+    <ul class="gl">
+      <li><strong>Premium (buy-to-play):</strong> Pay once, own forever. Simplest, most respected by players. Margin is per-copy sold — no ongoing revenue without DLC. Works best for: narrative games, single-player experiences, games with defined endings. Steam for PC, direct console digital or physical.</li>
+      <li><strong>Free-to-Play (F2P / freemium):</strong> Free to download, monetise in-app. Can reach enormous player bases. Revenue highly concentrated (80%+ from 5% of players). Requires ongoing live ops investment. Works best for: competitive multiplayer, social games, mobile. Requires different design sensibility from premium.</li>
+      <li><strong>Game as a Service (GaaS / Live Service):</strong> Ongoing content updates, seasons, events. Requires a live ops team, content pipeline, analytics infrastructure, and community management. High ceiling, high cost. Not for every team. Fortnite, Destiny 2, Apex Legends are the success cases; many others are cautionary tales.</li>
+      <li><strong>DLC and expansions:</strong> Substantial new content (expansion pack — new campaign, region, feature set) or small additions (cosmetics, characters, modes). Expansions work for engaged premium audiences. Avoid paid cosmetics that affect gameplay readability or competitive advantage.</li>
+      <li><strong>Battle Pass:</strong> Time-limited seasonal content track with free and premium tiers. Drives daily engagement, predictable revenue cadence, cosmetics-only in best-practice implementations. Fortnite's model is the template. Players must find the progression and reward frequency genuinely satisfying or they cancel.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Analytics, Metrics &amp; Ethical Design</h3>
+    <ul class="gl">
+      <li><strong>The core KPIs:</strong> DAU/MAU (Daily/Monthly Active Users — engagement health), ARPU (Average Revenue Per User — monetisation efficiency), ARPPU (Average Revenue Per Paying User — how much paying users spend), LTV (Lifetime Value — long-term revenue per user), D1/D7/D30 Retention (what % of players return after 1/7/30 days — the most predictive success metric).</li>
+      <li><strong>Retention is the foundation:</strong> You cannot monetise players who have left. D1 retention (% who return the next day) is your game's most important early metric. Industry benchmarks: Good mobile D1 = 40%, D7 = 20%, D30 = 10%. If D1 is below 25%, fix the new player experience before optimising monetisation.</li>
+      <li><strong>Player segmentation:</strong> Whales (~5% of players, often 60–70% of F2P revenue), dolphins (occasional spenders), minnows (single purchase), and free players (conversion targets). Design content and offers for each segment. Never design solely for whales — they rely on a healthy free player ecosystem.</li>
+      <li><strong>Ethical monetisation principles:</strong> No pay-to-win in competitive games (destroys trust instantly). No variable reward schedules targeting minors. Disclose loot box odds (now required by law in many jurisdictions). No FOMO mechanics designed to exploit anxiety. No "whale hunting" through targeted offers based on spending patterns. These aren't just ethics — they're regulations in many markets.</li>
+      <li><strong>Loot boxes and gambling regulations:</strong> Belgium, Netherlands, and other markets have classified certain loot box mechanics as gambling. Apple and Google require loot box odds disclosure. Know the legal landscape for every market you sell in before designing your monetisation system.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>Supercell's design philosophy: "If the game isn't fun for free players, it won't be monetised well either." Their free players are the community, the tournament players, the content creators — the ecosystem that makes the paying players' investment feel valuable. Destroy the free player experience and you destroy the value proposition for whales. <strong>The most durable monetisation strategy makes the free game genuinely worth playing and makes paying feel like supporting something you love, not buying your way to fun.</strong></p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Analytics Tools:</span><span class="chip">GameAnalytics</span><span class="chip">Firebase Analytics</span><span class="chip">Unity Analytics</span><span class="chip">Amplitude</span><span class="chip">AppsFlyer (mobile UA)</span><span class="chip">PlayFab Economy</span></div>
+</section>
+
+<!-- S16 MARKETING -->
+<section id="s16" class="section" style="--sc:#fd9644">
+  <div class="sh"><div class="sh-icon">📢</div><div class="sh-body"><div class="sh-tag">Chapter 16 · Business</div><h2>Marketing &amp; Community Building</h2></div><div class="sh-num">16 / 20</div></div>
+  <p class="s-intro">A great game that no one knows about fails. Marketing is not manipulation — it is communication. Your job is to efficiently find the people who will love your game and give them enough information to make the decision to play it. Start 12–18 months before launch. Build community, not audience. Audience consumes; community evangelises.</p>
+
+  <div class="sub">
+    <h3>Wishlists, Trailers &amp; Steam Optimisation</h3>
+    <ul class="gl">
+      <li><strong>Steam wishlist strategy:</strong> The Steam algorithm rewards velocity of wishlist additions. A game with 50,000+ wishlists at launch appears in "Popular Upcoming," gets featured in Next Fest, and gets the launch notification to 50,000 potential buyers. Target 10,000 wishlists before launch to be viable; 50,000 for a successful launch.</li>
+      <li><strong>Steam Next Fest:</strong> Bi-annual Steam event (June and November) where demos get heavy algorithmic promotion. A strong demo can add 20,000–100,000 wishlists in one week. The demo should end on a satisfying cliff-hanger that makes players want to see what comes next. Track conversion: demo plays → wishlists → purchases.</li>
+      <li><strong>Capsule art is your most important asset:</strong> Steam capsule (460×215px) is the first thing every potential buyer sees. It must communicate genre, tone, and quality in a thumbnail. Hire a professional illustrator for this specifically. Test multiple variants. The capsule determines clickthrough rate more than any other single asset.</li>
+      <li><strong>Trailer hierarchy:</strong> (1) Announcement trailer: 30–60 seconds, atmosphere, emotion, "this exists" moment. Show no gameplay UI. Make it feel like a film. (2) Gameplay trailer: 90 seconds, actual mechanics, actual systems, demonstrate the loop. (3) Launch trailer: 90 seconds, hype, best moments, "the game is here." Never reuse the same trailer three times.</li>
+      <li><strong>Steam page copy:</strong> First 200 characters of your description are visible without clicking "Read More." Nail these. Front-load the USP. Use bullet points for feature lists. Tag selection (up to 20) affects who sees your game in search and recommendations — choose the most accurate, most searched tags, not the most flattering.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Social Media, Press &amp; Community</h3>
+    <ul class="gl">
+      <li><strong>Platform strategy:</strong> TikTok/Instagram Reels for algorithmic reach (short-form video of satisfying game moments, developer process, behind the scenes). YouTube for deep-dives and long gameplay (converts to wishlist at low rate but high quality). Twitter/X for industry relationships and journalist contact. Discord for building actual community.</li>
+      <li><strong>Press and journalist outreach:</strong> Research journalists who cover your genre specifically. Personalise every pitch email — know their recent articles. Provide a press kit (screenshots, trailer, factsheet), a review key, and a clear embargo date. Never mass-BCC 200 journalists. Kotaku, IGN, RPS all get 50+ pitches daily — yours must be specific to them.</li>
+      <li><strong>Influencer strategy:</strong> Micro-influencers (1K–100K subscribers) often have better engagement rates and are more receptive to indie keys. Identify creators who cover your genre and whose audience matches your game. Give early access; don't dictate content. A genuinely enthusiastic coverage piece converts far better than paid promotion.</li>
+      <li><strong>Convention strategy:</strong> PAX (East, West, Australia), GDC, EGX, Gamescom, Tokyo Game Show. Each has a different audience and media presence. GDC is industry-facing (good for B2B and press). PAX is consumer-facing (good for player demos and community). Budget for conventions only once you have a playable vertical slice.</li>
+      <li><strong>Community management:</strong> Discord server from day one of public announcement. Weekly devlogs keep the community warm during development. Respond to every Steam review in Early Access — developers who engage turn negative reviews into positive ones consistently. Community is compounding — a small engaged community grows; a large passive audience does not.</li>
+      <li><strong>Press kit essentials:</strong> 1920×1080 screenshots (minimum 10, diverse), 4K if possible, logo with transparent background (PNG), game description (50 words, 150 words, 300 words), factsheet (developer, release date, platforms, price, genres, website), trailer embed link, developer bio, and contact email. Host on a page like presskit() or Notion.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight — The Game Discoverable Principle</div>
+    <p>Steam discovery expert Simon Carless (Game Discover Co newsletter): the single biggest predictor of a game's success is how clearly it communicates what kind of game it is in the first 5 seconds of the capsule image and trailer. Players scroll infinitely. You have one frame of a thumbnail to earn a click. <strong>Your game should market itself — if you cannot describe what your game is in 10 words that make someone want to play it, that is a design problem, not a marketing problem.</strong> Clarify the concept before spending budget on creative.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">presskit()</span><span class="chip">Notion (press kit)</span><span class="chip">Buffer (social scheduling)</span><span class="chip">OBS (content capture)</span><span class="chip">Adobe Premiere</span><span class="chip">Keymailer (influencer keys)</span></div>
+</section>
+
+<!-- S17 LAUNCH -->
+<section id="s17" class="section" style="--sc:#a29bfe">
+  <div class="sh"><div class="sh-icon">🚀</div><div class="sh-body"><div class="sh-tag">Chapter 17 · Business</div><h2>Launch &amp; Post-Launch</h2></div><div class="sh-num">17 / 20</div></div>
+  <p class="s-intro">Launch day is not the end of development — it is the beginning of a relationship with your players. The games that sustain commercial success treat 1.0 as the foundation of an ongoing conversation, not the delivery of a finished product. How you handle your first week defines your studio's reputation for years.</p>
+
+  <div class="sub">
+    <h3>Launch Day Preparation</h3>
+    <ul class="gl">
+      <li><strong>Gold master 2+ weeks before launch:</strong> Your release build must be final at least two weeks before release. This allows emergency patch pipeline, store submission and certification review, and team rest before the storm. Shipping a build you compiled 48 hours before launch is a recipe for disaster.</li>
+      <li><strong>Day-one patch:</strong> Plan for a day-one patch from the start. You will find issues during certification, from review copies sent to press, and from internal playtesting of the gold candidate. Have a patch submission in progress on day one so you can push fixes within 24 hours of launch.</li>
+      <li><strong>Crash monitoring war room:</strong> Assign 2–3 people to monitor crash reports, Steam forums, and social media for the first 72 hours post-launch. Triage by frequency and severity. A crash on launch that affects 10% of players needs a hotfix within hours, not days.</li>
+      <li><strong>Review management:</strong> Never argue with negative reviews. Respond professionally: acknowledge the issue, state what you're doing about it, thank them for the feedback. A developer who responds constructively to negative Steam reviews regularly sees reviewers update their score. Silence confirms every criticism.</li>
+      <li><strong>Soft launch for mobile:</strong> Release in a limited market (Canada, Australia, New Zealand) to validate monetisation, identify crashes on device fragmentation, and tune the new user experience before the global launch. A bad global launch is irreversible; a bad Canadian launch is recoverable.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Post-Launch Operations &amp; Content</h3>
+    <ul class="gl">
+      <li><strong>Roadmap communication:</strong> Publish a high-level roadmap after launch. Be specific about what's coming, vague about timelines (overpromising dates is worse than under-communicating them). Players who know content is coming are retained players. Radio silence after launch is the fastest path to a dead community.</li>
+      <li><strong>Content update cadence:</strong> Even small updates (balance patches, QoL improvements, bug fixes) with clear patch notes keep the game visible and the community engaged. Each update re-surfaces the game in recommendation algorithms. Free content updates drive second sales spikes — new players buy when new players are buying.</li>
+      <li><strong>Early Access strategy:</strong> Steam Early Access works for: games that benefit from player feedback during development, survival/sandbox games with inherent replay value, games where the developer has shipped before and has community trust. It fails when used as a soft launch for an unfinished game with no update cadence.</li>
+      <li><strong>The public post-mortem:</strong> Write and publish a detailed post-mortem 3–6 months after launch. What went right, what went wrong, what would you do differently. This builds community trust, helps other developers, generates press coverage, and forces the team to learn explicitly. GDC's "Failure Workshop" sessions are the most valuable talks at the conference.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>Hades launched in 1.0 after 18 months of Early Access, and Supergiant had built such a strong relationship with their community through transparent devlogs and responsive patches that the launch was a celebration rather than a reveal. They knew exactly what the community wanted from 1.0 because they'd been listening throughout EA. <strong>Launch is not a moment — it's a milestone in an ongoing relationship.</strong> The studios that survive and grow treat every player communication as an investment in that relationship, not a transaction.</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span><div>
+    <div class="cl">Common Mistake</div>
+    <p><strong>Treating launch as "done."</strong> No 0.1 version of a game is done. Cyberpunk 2077 launched broken and recovered into an acclaimed game through two years of patches and an expansion — because CD Projekt Red treated launch as the beginning of their commitment, not the end. Players who bought at launch and came back two years later became some of the game's most vocal advocates. You can recover from a bad launch. You cannot recover from abandoning your players after it.</p>
+    </div>
+  </div>
+</section>
+
+<!-- S18 TEAM -->
+<section id="s18" class="section" style="--sc:#e84393">
+  <div class="sh"><div class="sh-icon">👥</div><div class="sh-body"><div class="sh-tag">Chapter 18 · Infrastructure</div><h2>Team Structure &amp; Pipeline</h2></div><div class="sh-num">18 / 20</div></div>
+  <p class="s-intro">Games are made by people. Every technical problem in game development has a human root cause. Feature creep, miscommunication, crunch culture, unclear ownership, absent documentation — these are team problems before they are production problems. The studios that consistently ship great games have figured out how to structure, communicate, and support the humans making them.</p>
+
+  <div class="sub">
+    <h3>Process: Agile, Scrum &amp; Milestones</h3>
+    <ul class="gl">
+      <li><strong>Agile for game development:</strong> The Agile manifesto was designed for software, not games, but its principles apply: working software (playable builds) over comprehensive documentation, responding to change over following a plan, collaboration over contracts. Adapt it to your game's reality rather than following it dogmatically.</li>
+      <li><strong>Sprint structure:</strong> 2-week sprints are the standard. Sprint planning (what are we building this sprint?), daily standups (15 minutes max — what did I do, what will I do, what's blocking me?), sprint review (playtest the sprint's work), retrospective (how do we work better?). Resist the urge to skip retrospectives — that's where the team gets healthier.</li>
+      <li><strong>Milestone planning:</strong> Define concrete, playable milestone deliverables: Prototype (core loop is fun), Vertical Slice (polished representative slice), Alpha (feature complete), Beta (content complete, bugfixing), Release Candidate (cert ready), Gold. Each milestone has clear entry and exit criteria. Milestones without criteria become moving targets.</li>
+      <li><strong>Kanban for ongoing work:</strong> Use Kanban boards (backlog → in progress → in review → done) for bug fixing, content production, and live ops work where sprints are less natural. Limit work-in-progress (WIP) columns to prevent multitasking debt. Linear and Jira support both Scrum and Kanban views.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Roles, Culture &amp; Anti-Crunch</h3>
+    <ul class="gl">
+      <li><strong>Core roles and their actual jobs:</strong> Game Designer (defines rules, systems, economy — writes the GDD, balances, iterates based on feedback), Programmer (implements systems, tools, and engine features — not just "makes it work" but makes it maintainable), Artist (concept to shipped asset — needs clear spec to be productive), Audio Engineer (SFX, music, implementation — often the most underutilised role), QA (advocates for the player — not "find the bugs" but "represent the audience"), Producer/PM (removes blockers, manages timeline, facilitates communication — not boss, coordinator).</li>
+      <li><strong>Small team reality:</strong> Most indie teams wear multiple hats. The programmer who also does engine tools, the artist who also does UI, the designer who also does community management. Document which hat you're wearing on which task and when. Explicit role clarity prevents "who was supposed to do that?" from killing features.</li>
+      <li><strong>Code review culture:</strong> Every code change goes through a pull request reviewed by at least one other developer before merging. Goal: catch bugs early, share knowledge about what changed, maintain code quality standards. Keep PRs small (&lt;300 lines ideally). Review within 24 hours — waiting longer creates merge conflicts and blocks colleagues.</li>
+      <li><strong>Documentation culture:</strong> "If it isn't documented, it doesn't exist." System design decisions, technical choices, pipeline steps, onboarding procedures. Write documentation as you build. Retroactive documentation is written for a system you no longer remember clearly, by someone who is now working on a different problem. A new team member should be able to get to productive work in 2 days using only your documentation.</li>
+      <li><strong>Crunch is a planning failure:</strong> The game industry has a crunch problem. Crunching for more than 2 weeks leads to quality degradation (tired people make mistakes), team attrition (burnout → people quit), and physical health consequences. Sustainable pace (40–50 hours/week maximum during critical phases, 40 normally) produces better games and retains the people who make them. Budget your schedule honestly and cut scope before you crunch.</li>
+      <li><strong>Psychological safety:</strong> Team members must feel safe raising problems, disagreeing with direction, and making mistakes without fear of blame. Teams without psychological safety hide problems until they're catastrophic. Celebrate "we found this early" as much as "we built this well."</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>Insomniac Games (Spider-Man, Ratchet and Clank) has one of the best reputations for culture in AAA and has been vocal about scheduling practices that avoid systematic crunch. Their approach: feature lists that are honestly scoped to available time, early cutting of scope that doesn't serve the game's core experience, and a "feature team" model where small cross-disciplinary groups own complete features from design through QA. <strong>The best games are made by people who want to come to work, not people who have no choice but to.</strong></p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Jira</span><span class="chip">Linear</span><span class="chip">Notion</span><span class="chip">Confluence</span><span class="chip">Slack</span><span class="chip">Discord</span><span class="chip">Loom</span><span class="chip">Miro</span></div>
+</section>
+
+<!-- S19 TOOLS & VERSION CONTROL -->
+<section id="s19" class="section" style="--sc:#26de81">
+  <div class="sh"><div class="sh-icon">🛠️</div><div class="sh-body"><div class="sh-tag">Chapter 19 · Infrastructure</div><h2>Tools &amp; Version Control</h2></div><div class="sh-num">19 / 20</div></div>
+  <p class="s-intro">Your version control system is the most critical piece of infrastructure in your development pipeline. It is the collective memory of your project. Losing work to a version control failure is catastrophic and irreversible. Your tools ecosystem is the second most critical — bad tooling taxes every developer every day, while good tooling multiplies everyone's productivity.</p>
+
+  <div class="sub">
+    <h3>Version Control for Games</h3>
+    <ul class="gl">
+      <li><strong>Git + Git LFS:</strong> Git is the universal standard for code. Git LFS (Large File Storage) extends it for binary assets (textures, audio, FBX, PSDs). Configure your .gitattributes to automatically track binary types with LFS. Without LFS, a game repo becomes a 50GB monster that clones in 2 hours. With LFS, only files you need are downloaded.</li>
+      <li><strong>Perforce Helix Core:</strong> The AAA industry standard (used at EA, Activision, Epic, Respawn, Insomniac). Handles enormous binary file repos natively, with granular locking (check out a file to prevent others editing it simultaneously). Expensive to self-host, affordable via Perforce's cloud offering. The safe choice for teams of 10+.</li>
+      <li><strong>Plastic SCM / Unity Version Control:</strong> Good middle ground between Git and Perforce. Visual branching and merging, handles Unity project structure well (now integrated into Unity Hub). Better binary handling than Git, more affordable than Perforce. Acquired by Unity in 2020.</li>
+      <li><strong>Branch strategy:</strong> main / master (always shippable — broken code never merges here), develop (integration branch), feature branches (one per task, short-lived). Never commit broken code to main. Tag every release candidate. Archive every gold master build permanently — you may need to trace a bug years later.</li>
+      <li><strong>Commit message discipline:</strong> Treat every commit message as documentation. "Fix" or "Update" are useless. "Fix: inventory UI stack count not updating on item merge (fixes #342)" is useful. Your commit history is a searchable log of every decision made in this project. Write it accordingly.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>CI/CD, Build Systems &amp; Asset Management</h3>
+    <ul class="gl">
+      <li><strong>Continuous Integration (CI):</strong> Automatically build and test the game on every merge to develop. Jenkins, GitHub Actions, GitLab CI, Unity Build Automation. A broken build notification within 10 minutes of a bad merge prevents cascade failures. "It builds on my machine" is not a build system.</li>
+      <li><strong>Automated builds:</strong> Nightly builds run at 2am, produce a playable build, run automated tests, and notify the team of results. QA tests nightly builds the next morning. This is how you catch regressions between human QA sessions. Never ship a build that wasn't produced by your CI system.</li>
+      <li><strong>Asset management:</strong> ShotGrid (formerly Shotgun) for AAA asset tracking with approval workflows. For indie teams: strict naming conventions + folder hierarchy + version suffixes in filenames (_v01, _v02_FINAL — never just FINAL). Archive everything — storage is cheap, recreating assets is expensive.</li>
+      <li><strong>Addressables / Asset Streaming:</strong> Unity Addressable Asset System, Unreal Asset Streaming. Load assets on demand rather than at scene start. Group assets by when they're needed (by level, by feature, by LOD). Reduces memory usage, eliminates loading spikes, and enables content updates without full game patches.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>At Epic Games, no engineer is ever more than one day of work away from a clean, buildable codebase. Their CI pipeline catches broken builds within minutes, their automated test suite runs in under an hour, and their golden rule is: <strong>never leave main broken overnight.</strong> The developer who breaks the build fixes it before going home, full stop. This discipline seems extreme until you've experienced the alternative — a broken develop branch that blocks the entire team while someone tracks down which of yesterday's 15 merges introduced the problem.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Git + LFS</span><span class="chip">Perforce Helix Core</span><span class="chip">Plastic SCM</span><span class="chip">GitHub Actions</span><span class="chip">Jenkins</span><span class="chip">Unity Build Automation</span><span class="chip">ShotGrid</span></div>
+</section>
+
+<!-- S20 SECURITY -->
+<section id="s20" class="section" style="--sc:#8854d0">
+  <div class="sh"><div class="sh-icon">🔒</div><div class="sh-body"><div class="sh-tag">Chapter 20 · Infrastructure</div><h2>Security &amp; Anti-Cheat</h2></div><div class="sh-num">20 / 20</div></div>
+  <p class="s-intro">Security is not a feature you add at the end — it is an architectural decision made on day one. Every choice about where game logic lives, how data is validated, and how player accounts are authenticated is a security decision. For multiplayer games especially, the cost of not doing this correctly is not a technical inconvenience — it is the permanent destruction of your game's competitive community.</p>
+
+  <div class="sub">
+    <h3>Server Authority &amp; Cheat Prevention</h3>
+    <ul class="gl">
+      <li><strong>Server-authoritative architecture:</strong> The server calculates all game-critical state. Clients send inputs (button presses, mouse movements, aim vectors) only. The server validates every action against game rules before accepting it. Position, health, ammo, resources — the server owns all of these. Never trust the client.</li>
+      <li><strong>Input validation:</strong> Every client input that arrives at the server must be validated: Is this movement physically possible given the character's speed? Is this damage value within the weapon's damage range? Did the player have line of sight? Is this action permitted in the current game state? Reject anything that fails validation.</li>
+      <li><strong>Anti-cheat software:</strong> Easy Anti-Cheat (EAC, Epic Games — used in Apex, Fortnite, many others), BattlEye (used in PUBG, Rainbow Six, GTA Online), Valve VAC. All operate at kernel level (Ring 0) on Windows. Effective against casual cheaters and commercial cheat tools. Not effective against determined, technically sophisticated attackers. Controversial due to privacy and system stability concerns.</li>
+      <li><strong>Statistical detection:</strong> Detect cheating through statistical anomaly: reaction times below human threshold, aim patterns that match aimbot behaviour, movement speeds above character maximum, resource counts that cannot be achieved legitimately. Build detection systems that flag for human review rather than auto-banning — false positives are catastrophic.</li>
+      <li><strong>Report systems:</strong> Player reporting is a signal, not a verdict. Build reporting into the UI, aggregate reports per player, trigger reviews at threshold. Human review for permanent bans. Automated temporary bans for clear violations. Never permanently ban solely on automated detection without human confirmation.</li>
+    </ul>
+  </div>
+
+  <div class="sub">
+    <h3>Data Security, Encryption &amp; Compliance</h3>
+    <ul class="gl">
+      <li><strong>Encrypt all transport:</strong> TLS 1.3 for all client-server communication. No exceptions. Plain HTTP for game data means every player on a shared network is an attack surface. Certificate pinning for mobile apps prevents man-in-the-middle attacks against your API.</li>
+      <li><strong>Secure save data:</strong> On mobile, save files are accessible to device owners and can be edited. Encrypt save files, validate checksums on load, and validate critical values server-side for online games. "Anti-cheat" that lives entirely in the save file is not anti-cheat.</li>
+      <li><strong>Password and account security:</strong> Hash passwords with bcrypt, Argon2, or PBKDF2 (never SHA-1, MD5, or plain SHA-256 for passwords). Offer MFA for accounts. Account lockout after failed attempts with exponential backoff. Email breach detection (HaveIBeenPwned API). Automatic session invalidation on password change.</li>
+      <li><strong>GDPR and privacy compliance:</strong> If you collect personal data from EU citizens (which you do if your game is available in the EU), GDPR applies. Required: explicit informed consent, right to data access on request, right to deletion, data breach notification within 72 hours. Collect the minimum data needed. Privacy by design, not privacy by policy.</li>
+      <li><strong>COPPA (children's online privacy):</strong> If users might be under 13, COPPA applies in the US. No behavioural advertising to minors. Parental consent required for data collection. Many games implement an age gate and apply child privacy rules to anyone who fails or skips it.</li>
+      <li><strong>DRM considerations:</strong> Denuvo (PC, expensive, adds load times, controversial in community), console platform DRM (built-in, free), Steam DRM (lightweight, easily stripped). Aggressive DRM consistently harms legitimate players more than pirates. Weigh the piracy deterrence against the UX cost and community resentment. Many successful studios ship DRM-free on itch.io without significant piracy impact.</li>
+    </ul>
+  </div>
+
+  <div class="callout pro">
+    <span class="ci">⚡</span><div>
+    <div class="cl">Pro Insight</div>
+    <p>Riot Games' anti-cheat engineer Philip Koskinas on Vanguard (Valorant's kernel-level anti-cheat): "No anti-cheat system makes a game cheat-free. The goal is to make cheating expensive enough, detectable enough, and risky enough that the majority of players choose not to." Security is economics, not absolutes. <strong>You are not trying to make cheating impossible — you are making it costly enough relative to the benefit that rational actors choose not to cheat.</strong> Server authority is the most cost-effective investment; after that, returns diminish quickly.</p>
+    </div>
+  </div>
+
+  <div class="callout warn">
+    <span class="ci">⚠️</span><div>
+    <div class="cl">Common Mistake</div>
+    <p><strong>Building security in as a retrofit.</strong> "We'll add proper validation after we ship" or "we'll implement GDPR compliance if we get big enough" — these are not plans, they are bets that you will not be held accountable before you're ready. Data breaches are public. GDPR fines are real. Cheating communities that form in the first month of a competitive game never go away. Build security into your architecture decisions from day one; the cost is a fraction of what retrofitting costs later.</p>
+    </div>
+  </div>
+
+  <div class="tools"><span class="tl">Tools:</span><span class="chip">Easy Anti-Cheat</span><span class="chip">BattlEye</span><span class="chip">Valve VAC</span><span class="chip">Let's Encrypt (TLS)</span><span class="chip">Auth0</span><span class="chip">Firebase Auth</span><span class="chip">OWASP Guidelines</span></div>
+</section>
+
+  </div><!-- end .content -->
+
+  <footer style="background:var(--bg2);border-top:1px solid var(--border);padding:3rem 3.5rem;text-align:center">
+    <div style="font-size:2rem;margin-bottom:.75rem">🎮</div>
+    <div style="font-family:'Space Grotesk',sans-serif;font-size:1rem;font-weight:600;color:var(--text);margin-bottom:.4rem">The Complete Game Development Bible</div>
+    <div style="font-size:.82rem;color:var(--text2);max-width:40rem;margin:0 auto 1.5rem;line-height:1.7">20 disciplines. Every technique. The same principles used at studios from two-person indie teams to thousand-person AAA giants. Now go build something great.</div>
+    <div style="display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="#s01" style="font-size:.78rem;color:var(--accent);text-decoration:none;padding:.35rem .75rem;border:1px solid rgba(61,244,168,.3);border-radius:100px">Back to Top ↑</a>
+    </div>
+    <div style="margin-top:2rem;font-family:'Fira Code',monospace;font-size:.65rem;color:var(--muted);letter-spacing:.08em">// MAKE GAMES · SHIP GAMES · LEARN FROM GAMES · REPEAT</div>
+  </footer>
+</main>
+
+<script>
+// Reading progress bar
+const rp = document.getElementById('rp');
+function updateProgress(){
+  const scrolled = window.scrollY;
+  const total = document.documentElement.scrollHeight - window.innerHeight;
+  rp.style.transform = 'scaleX(' + (scrolled/total) + ')';
+}
+window.addEventListener('scroll', updateProgress, {passive:true});
+updateProgress();
+
+// Active nav highlighting via Intersection Observer
+const sections = document.querySelectorAll('.section[id]');
+const navLinks = document.querySelectorAll('.nav-link[data-id]');
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(entry=>{
+    if(entry.isIntersecting){
+      const id = entry.target.id;
+      navLinks.forEach(l=>{
+        l.classList.toggle('active', l.dataset.id === id);
+      });
+    }
+  });
+},{rootMargin:'-20% 0px -70% 0px'});
+sections.forEach(s=>observer.observe(s));
+
+// Smooth scroll for nav links
+navLinks.forEach(link=>{
+  link.addEventListener('click', e=>{
+    e.preventDefault();
+    const target = document.querySelector(link.getAttribute('href'));
+    if(target){
+      target.scrollIntoView({behavior:'smooth',block:'start'});
+      // Close sidebar on mobile
+      if(window.innerWidth<=920){
+        document.getElementById('sidebar').classList.remove('open');
+      }
+    }
+  });
+});
+
+// Close sidebar when clicking outside on mobile
+document.addEventListener('click', e=>{
+  const sb = document.getElementById('sidebar');
+  const sbt = document.getElementById('sbt');
+  if(window.innerWidth<=920 && sb.classList.contains('open') && !sb.contains(e.target) && e.target!==sbt){
+    sb.classList.remove('open');
+  }
+});
+</script>
+</body>
+</html>
